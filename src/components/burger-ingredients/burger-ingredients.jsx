@@ -2,13 +2,16 @@ import React, {useState} from 'react';
 import {Tab} from "@ya.praktikum/react-developer-burger-ui-components";
 import burgerIngredientsStyles from './burger-ingredients.module.css';
 import IngredientCard from '../ingredient-card/ingredient-card';
-import data from '../utils/data';
 import PropTypes from "prop-types";
+import {burgerItem} from '../burgerItem';
 
 
+const BurgerIngredients = (props) => {
+    const [current, setCurrent] = useState('Булки');
+    const buns = props.data.filter(ingredient => ingredient.type === 'bun');
+    const sauces = props.data.filter(ingredient => ingredient.type === 'sauce');
+    const mains = props.data.filter(ingredient => ingredient.type === 'main');
 
-const BurgerIngredients = () => {
-    const [current, setCurrent] = useState('one')
     return (
         <div>
             <div style={{display: 'flex'}}>
@@ -30,31 +33,31 @@ const BurgerIngredients = () => {
             </div>
             <div className={burgerIngredientsStyles.content}>
                 <div className={burgerIngredientsStyles.title}>
-                    <p className="text text_type_main-medium title"
+                    <h2 className="text text_type_main-medium title"
                        id="bun">
                         Булки
-                    </p>
+                    </h2>
                 </div>
                 <div className={burgerIngredientsStyles.category}>
-                    {data.filter(burger => burger.type === 'bun').map((burger) => (
+                {buns.map((burger) => (
                         <IngredientCard key={burger._id} data={burger}/>
                     ))}
                 </div>
-                <p className="text text_type_main-medium"
+                <h2 className="text text_type_main-medium"
                    id="sauce"
                 >Соусы
-                </p>
+                </h2>
                 <div className={burgerIngredientsStyles.category}>
-                {data.filter(burger => burger.type === 'sauce').map((burger) => (
+                {sauces.map((burger) => (
                     <IngredientCard key={burger._id} data={burger}/>
                 ))}
                 </div>
-                <p className="text text_type_main-medium"
+                <h2 className="text text_type_main-medium"
                    id="main">
                     Начинки
-                </p>
+                </h2>
                 <div className={burgerIngredientsStyles.category}>
-                {data.filter(burger => burger.type === 'main').map((burger) => (
+                {mains.map((burger) => (
                     <IngredientCard key={burger._id} data={burger} />
                 ))}
                 </div>
@@ -62,5 +65,9 @@ const BurgerIngredients = () => {
         </div>
     )
 }
+
+BurgerIngredients.propTypes = {
+  data: PropTypes.arrayOf(burgerItem).isRequired
+};
 
 export default BurgerIngredients;

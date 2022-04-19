@@ -1,26 +1,23 @@
 import React from 'react';
 import ingredientCard from './ingredient-card.module.css';
-import substractSmallImage from '../../images/Subtract-small.svg'
 import PropTypes from "prop-types";
+import {CurrencyIcon} from "@ya.praktikum/react-developer-burger-ui-components";
+import {burgerItem} from '../burgerItem';
 
 const IngredientCard = (props) => {
     return(
         <div className={ingredientCard.wrapper}>
-            <img src={props.data.image} alt="image"/>
+            <img src={props.data.image} alt={props.data.name}/>
             <div className={ingredientCard.price}>
             <p className="text text_type_digits-default">{props.data.price}
              </p>
-             <img src={substractSmallImage} alt="substractSmallImage"/>
+             <CurrencyIcon  type="primary" />
             </div>
             <p className="text text_type_main-default">{props.data.name}</p>
         </div>
     )
 }
 
-IngredientCard.propTypes = PropTypes.arrayOf({
-    name: PropTypes.string,
-    price: PropTypes.number,
-    image: PropTypes.string,
-});
+IngredientCard.propTypes = burgerItem;
 
 export default IngredientCard;

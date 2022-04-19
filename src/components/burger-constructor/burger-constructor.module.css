@@ -7,6 +7,11 @@
 
 .wrapper {
     padding-right: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    height: 350px;
+    overflow-y: scroll;
 }
 
 .wrapper::-webkit-scrollbar {
@@ -26,6 +31,11 @@
     align-items: center;
 }
 
+.diamond > svg {
+    height: 33px;
+    width: 33px;
+}
+
 .diamond {
     margin-right: 40px;
     margin-left: 10px;
@@ -34,4 +44,11 @@
 .product {
     display: flex;
     width: 100%;
+}
+
+.bun {
+    margin-top: 16px;
+    margin-bottom: 16px;
+    padding-left: 46px;
+    padding-right: 34px;
 }

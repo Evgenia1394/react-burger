@@ -1,42 +1,53 @@
 import React from 'react';
-import {Button, ConstructorElement, DragIcon} from "@ya.praktikum/react-developer-burger-ui-components";
+import {Button, ConstructorElement, CurrencyIcon, DragIcon} from "@ya.praktikum/react-developer-burger-ui-components";
 import burgerStyles from './burger-constructor.module.css';
-import substractImage from '../../images/Subtract.svg'
 import PropTypes from "prop-types";
-import IngredientCard from "../ingredient-card/ingredient-card";
+import {burgerItem} from '../burgerItem';
 
 const BurgerConstructor = (props) => {
-    const wrapper = {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '16px',
-        height: '400px',
-        overflowY: 'scroll',
-    }
+    const notBun = props.data.filter(ingredient => (ingredient.type !== 'bun'))
     return (
         <section>
-            <div style={wrapper} className={burgerStyles.wrapper}>
-                {props.data.map((burger) => (
-                    <div className={burgerStyles.wrapperItem} key={burger._id}>
+            <div className={burgerStyles.bun}>
+            <ConstructorElement
+                type={props.data[0].type}
+                isLocked={true}
+                text={`${props.data[0].name} (верх)`}
+                price={props.data[0].price}
+                thumbnail={props.data[0].image}
+            />
+            </div>
+            <div className={burgerStyles.wrapper}>
+                {notBun.map((ingredient) => (
+                    <div className={burgerStyles.wrapperItem} key={ingredient._id}>
                         <DragIcon type="primary"/>
                         <div className={burgerStyles.product}>
                             <ConstructorElement
-                                type={burger.type}
-                                isLocked={true}
-                                text={burger.name}
-                                price={burger.price}
-                                thumbnail={burger.image}
+                                type={ingredient.type}
+                                isLocked={ingredient.type === 'bun'}
+                                text={ingredient.name}
+                                price={ingredient.price}
+                                thumbnail={ingredient.image}
                             />
                         </div>
                     </div>
                 ))}
+            </div>
+            <div className={burgerStyles.bun}>
+                <ConstructorElement
+                    type={props.data[0].type}
+                    isLocked={true}
+                    text={`${props.data[0].name} (низ)`}
+                    price={props.data[0].price}
+                    thumbnail={props.data[0].image}
+                />
             </div>
             <div className={burgerStyles.result}>
                 <div className='text text_type_digits-medium'>
                     610
                 </div>
                 <div className={burgerStyles.diamond}>
-                    <img src={substractImage} alt="subtract"/>
+                    <CurrencyIcon  type="primary" />
                 </div>
                 <Button type="primary" size="medium">
                     Оформить заказ
@@ -44,6 +55,10 @@ const BurgerConstructor = (props) => {
             </div>
         </section>
     )
+};
+
+BurgerConstructor.propTypes =  {
+    data: PropTypes.arrayOf(burgerItem).isRequired
 };
 
 export default BurgerConstructor;

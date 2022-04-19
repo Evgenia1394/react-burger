@@ -7,21 +7,18 @@ import BurgerConstructor from "./components/burger-constructor/burger-constructo
 import appStyles from './app.module.css'
 
 function App() {
-    const titleMargin = {
-        margin: '40px 0 20px 10%',
-    };
   return (
     <>
       <AppHeader />
-      <div className="text text_type_main-large" style={titleMargin}>
+      <h1 className={appStyles.titleMargin}>
             Соберите бургер
-      </div>
+      </h1>
       <div className={appStyles.wrapper}>
-          <BurgerIngredients />
+          <BurgerIngredients data={data}/>
           <BurgerConstructor data={data}/>
       </div>
     </>
   );
-};
+}
 
 export default App;
