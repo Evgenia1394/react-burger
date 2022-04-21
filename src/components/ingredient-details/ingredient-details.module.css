@@ -1,0 +1,21 @@
+.closeButton {
+    cursor: pointer;
+    display: flex;
+    justify-content: end;
+}
+.compositionItem {
+    display: flex;
+    flex-direction: column;
+}
+
+.composition {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 32px;
+}
+.header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}

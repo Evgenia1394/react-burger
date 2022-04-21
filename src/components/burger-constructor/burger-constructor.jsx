@@ -1,11 +1,32 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Button, ConstructorElement, CurrencyIcon, DragIcon} from "@ya.praktikum/react-developer-burger-ui-components";
 import burgerStyles from './burger-constructor.module.css';
 import PropTypes from "prop-types";
 import {burgerItem} from '../burgerItem';
+import OrderDetails from "../order-details/order-details";
 
 const BurgerConstructor = (props) => {
     const notBun = props.data.filter(ingredient => (ingredient.type !== 'bun'))
+    const [visibleOrder, setVisibleOrder] = useState(false);
+    useEffect(() => {
+        const closeEsc = document.addEventListener('keydown', function(event) {
+            if (event.code == 'Escape') {
+                setVisibleOrder(false);
+            }
+        });
+        return () => {
+            window.removeEventListener('keydown', closeEsc);
+        };
+    }, [])
+
+    const handleOpenModalOrder = () => {
+        setVisibleOrder(true);
+    }
+
+    const handleCloseModalOrder = () => {
+        setVisibleOrder(false);
+    }
+
     return (
         <section>
             <div className={burgerStyles.bun}>
@@ -49,9 +70,10 @@ const BurgerConstructor = (props) => {
                 <div className={burgerStyles.diamond}>
                     <CurrencyIcon  type="primary" />
                 </div>
-                <Button type="primary" size="medium">
+                <Button type="primary" size="medium" onClick={handleOpenModalOrder}>
                     Оформить заказ
                 </Button>
+                {visibleOrder && <OrderDetails handleCloseModal={handleCloseModalOrder}/>}
             </div>
         </section>
     )

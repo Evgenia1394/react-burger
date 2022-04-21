@@ -4,6 +4,7 @@ import burgerIngredientsStyles from './burger-ingredients.module.css';
 import IngredientCard from '../ingredient-card/ingredient-card';
 import PropTypes from "prop-types";
 import {burgerItem} from '../burgerItem';
+import Modal from '../Modal/Modal.jsx'
 
 
 const BurgerIngredients = (props) => {
