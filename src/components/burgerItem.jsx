@@ -6,5 +6,9 @@ export const burgerItem = PropTypes.shape({
     image: PropTypes.string.isRequired,
     _id: PropTypes.string.isRequired,
     type: PropTypes.string.isRequired,
+    calories: PropTypes.number,
+    proteins: PropTypes.number,
+    fat: PropTypes.number,
+    carbohydrates: PropTypes.number,
 })
 

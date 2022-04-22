@@ -1,23 +1,30 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React, {useEffect} from 'react';
 import modalOverlayStyles from './modal-overlay.module.css'
-import IngredientCard from "../ingredient-card/ingredient-card";
 import PropTypes from "prop-types";
 
-const modalOverlay = document.getElementById("overlay-root");
-
-
 const ModalOverlay = (props) => {
-    return ReactDOM.createPortal(
-        <>
-            <div className={modalOverlayStyles.main}>
-                <div className={modalOverlayStyles.content}>
-                </div>
-            </div>
-        </>
-        ,
-        modalOverlay
+
+    useEffect(() => {
+        const onOverlayClick = document.addEventListener('click', function (event) {
+            props.handleOverlayModal();
+        });
+        return () => {
+            window.removeEventListener('click', onOverlayClick);
+        }
+    }, [])
+
+    return (
+       <div className={modalOverlayStyles.main} onClick={props.handleOverlayModal}>
+           <div className={modalOverlayStyles.content}>
+               {props.children}
+           </div>
+       </div>
     );
+}
+
+ModalOverlay.propTypes = {
+    children: PropTypes.func,
+    handleOverlayModal: PropTypes.func
 }
 
 export default ModalOverlay;

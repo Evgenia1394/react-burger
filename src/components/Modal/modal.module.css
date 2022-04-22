@@ -1,16 +1,17 @@
 .main {
     display: block;
     position: absolute;
-    left: calc(50vw - 250px);
-    top: calc(50vh - 200px);
-    width: 500px;
-    height: max-content;
+    left: calc(50vw - 360px);
+    top: calc(50vh - 370px);
+    width: 720px;
+    height: 718px;
     background-color: #1C1C21;
     border-radius: 40px;
     z-index: 10;
     padding: 40px 28px;
     position: fixed;
     overflow: hidden;
+    opacity: 100%;
 }
 
 .content {

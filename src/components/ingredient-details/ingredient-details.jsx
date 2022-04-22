@@ -8,20 +8,17 @@ import PropTypes from "prop-types";
 const IngredientDetails = (props) => {
     return (
         <>
-            {/*<ModalOverlay>*/}
-                <Modal handleCloseModal={props.handleCloseModal}>
-                    <ModalOverlay>
-                    </ModalOverlay>
-                    <header className={ingredientDetailsStyles.header}>
+                <div className={ingredientDetailsStyles.wrapper}>
+                <h2 className={ingredientDetailsStyles.header}>
                     <p className="text text_type_main-large">
                         Детали ингредиента
                     </p>
-                    </header>
-                    <img src={props.src} alt={props.name}/>
-                    <p className="text text_type_main-medium">
-                        {props.name}
-                    </p>
-                    <div className={ingredientDetailsStyles.composition}>
+                </h2>
+                <img src={props.src} alt={props.name}/>
+                <p className="text text_type_main-medium">
+                    {props.name}
+                </p>
+                <div className={ingredientDetailsStyles.composition}>
                     <div className={ingredientDetailsStyles.compositionItem}>
                         <p className="text text_type_main-default text_color_inactive">
                             Калории, ккал
@@ -54,22 +51,19 @@ const IngredientDetails = (props) => {
                             {props.carbohydrates}
                         </p>
                     </div>
-                    </div>
-
-                </Modal>
-            {/*</ModalOverlay>*/}
+                </div>
+                </div>
         </>
     )
 }
 
-ModalOverlay.propTypes = {
-    handleCloseModal: PropTypes.func.isRequired,
+IngredientDetails.propTypes = {
     name: PropTypes.string.isRequired,
     src: PropTypes.string.isRequired,
-    calories: PropTypes.string.isRequired,
-    proteins: PropTypes.string.isRequired,
-    fat: PropTypes.string.isRequired,
-    carbohydrates: PropTypes.string.isRequired,
+    calories: PropTypes.number.isRequired,
+    proteins: PropTypes.number.isRequired,
+    fat: PropTypes.number.isRequired,
+    carbohydrates: PropTypes.number.isRequired,
 }
 
 export default IngredientDetails;

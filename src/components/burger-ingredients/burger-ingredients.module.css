@@ -33,3 +33,6 @@ a:visited {
 .title {
     margin-top: 40px;
 }
+.wrapperTab {
+    display: flex;
+}

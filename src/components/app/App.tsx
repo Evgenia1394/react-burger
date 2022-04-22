@@ -1,13 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import './App.css';
-import AppHeader from "./components/app-header/app-header";
-import data from "./components/utils/data";
-import BurgerIngredients from "./components/burger-ingredients/burger-ingredients";
-import BurgerConstructor from "./components/burger-constructor/burger-constructor";
+import '../../App.css';
+import AppHeader from "../app-header/app-header";
+import BurgerIngredients from "../burger-ingredients/burger-ingredients";
+import BurgerConstructor from "../burger-constructor/burger-constructor";
 import appStyles from './app.module.css';
-import ErrorPage from './components/error-page/error-page';
-import Modal from './components/Modal/Modal'
-import LoadingPage from "./components/loading-page/loading-page";
+import ErrorPage from '../error-page/error-page';
+import LoadingPage from "../loading-page/loading-page";
 
 function App() {
     const domenUrl = 'https://norma.nomoreparties.space';
@@ -30,7 +28,6 @@ function App() {
                 setState({...state, data: data.data, loading: false})
             } catch (e) {
                 setState({...state, loading: false, error: true})
-                throw e;
             }
         }
         dataUrl()

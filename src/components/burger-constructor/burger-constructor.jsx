@@ -1,29 +1,31 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {Button, ConstructorElement, CurrencyIcon, DragIcon} from "@ya.praktikum/react-developer-burger-ui-components";
 import burgerStyles from './burger-constructor.module.css';
-import PropTypes from "prop-types";
-import {burgerItem} from '../burgerItem';
 import OrderDetails from "../order-details/order-details";
+import Modal from "../Modal/Modal";
+import {burgerItem} from "../burgerItem";
+import PropTypes from "prop-types";
 
 const BurgerConstructor = (props) => {
     const notBun = props.data.filter(ingredient => (ingredient.type !== 'bun'))
     const [visibleOrder, setVisibleOrder] = useState(false);
-    useEffect(() => {
-        const closeEsc = document.addEventListener('keydown', function(event) {
-            if (event.code == 'Escape') {
-                setVisibleOrder(false);
-            }
-        });
-        return () => {
-            window.removeEventListener('keydown', closeEsc);
-        };
-    }, [])
 
-    const handleOpenModalOrder = () => {
+    const handleOpenModal = () => {
         setVisibleOrder(true);
     }
 
-    const handleCloseModalOrder = () => {
+    const handleCloseModal = () => {
+        setVisibleOrder(false);
+    }
+
+    const handleEscModal = (isOpen) => {
+        setVisibleOrder(isOpen);
+    }
+
+    //не понимаю, почему не срабатывает повторное открытие того же элемента после срабатывания клика по overlay
+    //отрабатывает корректно только если стоит один обработчик c esc
+
+    const handleOverlayModal = () => {
         setVisibleOrder(false);
     }
 
@@ -31,7 +33,7 @@ const BurgerConstructor = (props) => {
         <section>
             <div className={burgerStyles.bun}>
             <ConstructorElement
-                type={props.data[0].type}
+                type="top"
                 isLocked={true}
                 text={`${props.data[0].name} (верх)`}
                 price={props.data[0].price}
@@ -56,7 +58,7 @@ const BurgerConstructor = (props) => {
             </div>
             <div className={burgerStyles.bun}>
                 <ConstructorElement
-                    type={props.data[0].type}
+                    type="bottom"
                     isLocked={true}
                     text={`${props.data[0].name} (низ)`}
                     price={props.data[0].price}
@@ -70,10 +72,17 @@ const BurgerConstructor = (props) => {
                 <div className={burgerStyles.diamond}>
                     <CurrencyIcon  type="primary" />
                 </div>
-                <Button type="primary" size="medium" onClick={handleOpenModalOrder}>
+                <Button type="primary" size="medium" onClick={handleOpenModal}>
                     Оформить заказ
                 </Button>
-                {visibleOrder && <OrderDetails handleCloseModal={handleCloseModalOrder}/>}
+                {visibleOrder &&
+                <Modal handleCloseModal={handleCloseModal}
+                       handleEscModal={handleEscModal}
+                       handleOverlayModal={handleOverlayModal}
+                >
+                    <OrderDetails />
+                </Modal>
+                }
             </div>
         </section>
     )

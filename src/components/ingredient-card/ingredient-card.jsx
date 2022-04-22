@@ -1,32 +1,39 @@
 import React, {useState} from 'react';
 import ingredientCardStyles from './ingredient-card.module.css';
-import PropTypes from "prop-types";
 import {CloseIcon, Counter, CurrencyIcon} from "@ya.praktikum/react-developer-burger-ui-components";
 import {burgerItem} from '../burgerItem';
-import Modal from "../Modal/Modal";
-import ModalOverlay from "../modalIverlay/modal-overlay";
 import IngredientDetails from "../ingredient-details/ingredient-details";
+import PropTypes from "prop-types";
+import Modal from "../Modal/Modal";
 
 const IngredientCard = (props) => {
     const [visible, setVisible] = useState(false);
 
     const handleOpenModal = () => {
-        setVisible(true);
+            setVisible(true);
     }
 
     const handleCloseModal = () => {
         setVisible(false);
     }
 
-    document.addEventListener('keydown', function(event) {
-        if (event.code == 'Escape') {
-            setVisible(false);
-        }
-    });
+    const handleEscModal = (isOpen) => {
+        setVisible(isOpen);
+    }
+
+    //не понимаю, почему не срабатывает повторное открытие того же элемента после срабатывания клика по overlay
+    //отрабатывает корректно только если стоит один обработчик c esc
+
+    const handleOverlayModal = () => {
+        setVisible(false);
+    }
 
     const modal =
+        <Modal handleCloseModal={handleCloseModal}
+               handleEscModal={handleEscModal}
+               handleOverlayModal={handleOverlayModal}
+        >
         <IngredientDetails
-            handleCloseModal={handleCloseModal}
             src={props.data.image}
             name={props.data.name}
             calories={props.data.calories}
@@ -34,6 +41,7 @@ const IngredientCard = (props) => {
             fat={props.data.fat}
             carbohydrates={props.data.carbohydrates}
         />
+        </Modal>
 
     return(
         <>
@@ -51,6 +59,8 @@ const IngredientCard = (props) => {
     )
 }
 
-IngredientCard.propTypes = burgerItem;
+IngredientCard.propTypes = {
+    data: burgerItem.isRequired,
+}
 
 export default IngredientCard;
