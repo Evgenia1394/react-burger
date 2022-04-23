@@ -36,14 +36,16 @@ function App() {
     return (
         <>
             {state.error &&
-                <ErrorPage/>
+            <ErrorPage/>
             }
             {state.loading &&
-                <LoadingPage />
+            <LoadingPage/>
             }
             {!state.loading && !state.error &&
             <>
-                <AppHeader/>
+                <div className={appStyles.wrapperHeader}>
+                    <AppHeader/>
+                </div>
                 <h1 id="1" className={appStyles.titleMargin}>
                     Соберите бургер
                 </h1>
@@ -56,6 +58,6 @@ function App() {
         </>
     );
 
-}
+};
 
 export default App;

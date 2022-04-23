@@ -9,18 +9,18 @@ const AppHeader = () => {
             <header className={headerStyles.header}>
                 <nav className={headerStyles.nav}>
                     <div className={headerStyles.two}>
-                    <a className={headerStyles.item}>
-                        <div className={headerStyles.icon}>
-                            <BurgerIcon type="primary"/>
-                        </div>
-                        <div className="text text_type_main-default">Конструктор</div>
-                    </a>
-                    <a className={headerStyles.item}>
-                        <div className={headerStyles.icon}>
-                            <ListIcon type="secondary"/>
-                        </div>
-                        <div className="text text_type_main-default text_color_inactive">Лента заказов</div>
-                    </a>
+                        <a className={headerStyles.item}>
+                            <div className={headerStyles.icon}>
+                                <BurgerIcon type="primary"/>
+                            </div>
+                            <div className="text text_type_main-default">Конструктор</div>
+                        </a>
+                        <a className={headerStyles.item}>
+                            <div className={headerStyles.icon}>
+                                <ListIcon type="secondary"/>
+                            </div>
+                            <div className="text text_type_main-default text_color_inactive">Лента заказов</div>
+                        </a>
                     </div>
                     <div className={headerStyles.logo}>
                         <Logo/>

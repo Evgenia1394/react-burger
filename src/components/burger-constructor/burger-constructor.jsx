@@ -17,13 +17,13 @@ const BurgerConstructor = (props) => {
     return (
         <section>
             <div className={burgerStyles.bun}>
-            <ConstructorElement
-                type="top"
-                isLocked={true}
-                text={`${props.data[0].name} (верх)`}
-                price={props.data[0].price}
-                thumbnail={props.data[0].image}
-            />
+                <ConstructorElement
+                    type="top"
+                    isLocked={true}
+                    text={`${props.data[0].name} (верх)`}
+                    price={props.data[0].price}
+                    thumbnail={props.data[0].image}
+                />
             </div>
             <div className={burgerStyles.wrapper}>
                 {notBun.map((ingredient) => (
@@ -55,7 +55,7 @@ const BurgerConstructor = (props) => {
                     610
                 </div>
                 <div className={burgerStyles.diamond}>
-                    <CurrencyIcon  type="primary" />
+                    <CurrencyIcon type="primary"/>
                 </div>
                 <Button type="primary" size="medium" onClick={handleOpenModal}>
                     Оформить заказ
@@ -64,7 +64,7 @@ const BurgerConstructor = (props) => {
                 <Modal
                     setVisible={setVisible}
                 >
-                    <OrderDetails />
+                    <OrderDetails/>
                 </Modal>
                 }
             </div>
@@ -72,7 +72,7 @@ const BurgerConstructor = (props) => {
     )
 };
 
-BurgerConstructor.propTypes =  {
+BurgerConstructor.propTypes = {
     data: PropTypes.arrayOf(burgerItem).isRequired
 };
 

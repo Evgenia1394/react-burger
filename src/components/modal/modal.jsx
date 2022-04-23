@@ -10,14 +10,14 @@ const modalRoot = document.getElementById("modal-root");
 
 const Modal = (props) => {
     useEffect(() => {
-        const onEsc = document.addEventListener('keydown', function (event) {
-            if (event.code === 'Escape') {
-               return handleCloseModal();
+        const onEsc = (e) => {
+            if (e.key === 'Escape') {
+                handleCloseModal();
             }
-        });
-        return () => {
-            window.removeEventListener('keydown', onEsc);
-        };
+        }
+        document.addEventListener('keydown', onEsc);
+
+        return () => document.removeEventListener('keydown', onEsc);
     }, [])
 
     const handleCloseModal = () => {
@@ -26,16 +26,16 @@ const Modal = (props) => {
 
     return ReactDOM.createPortal(
         <>
-           <div className={modalStyles.main}
-           >
+            <div className={modalStyles.main}
+            >
                 <h2 className={orderDetailsStyles.header}>
                     <CloseIcon onClick={handleCloseModal} type="primary"/>
                 </h2>
                 <div className={modalStyles.content}>
                     {props.children}
                 </div>
-                </div>
-            <ModalOverlay handleCloseModal={handleCloseModal} />
+            </div>
+            <ModalOverlay handleCloseModal={handleCloseModal}/>
         </>
         ,
         modalRoot

@@ -1,14 +1,11 @@
-import ModalOverlay from "../modal-overlay/modal-overlay";
-import Modal from "../modal/modal";
 import ingredientDetailsStyles from './ingredient-details.module.css'
-import {CloseIcon} from "@ya.praktikum/react-developer-burger-ui-components";
 import React from "react";
 import PropTypes from "prop-types";
 
 const IngredientDetails = (props) => {
     return (
         <>
-                <div className={ingredientDetailsStyles.wrapper}>
+            <div className={ingredientDetailsStyles.wrapper}>
                 <h2 className={ingredientDetailsStyles.header}>
                     <p className="text text_type_main-large">
                         Детали ингредиента
@@ -52,7 +49,7 @@ const IngredientDetails = (props) => {
                         </p>
                     </div>
                 </div>
-                </div>
+            </div>
         </>
     )
 }
