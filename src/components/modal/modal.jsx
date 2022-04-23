@@ -4,16 +4,15 @@ import modalStyles from './modal.module.css';
 import PropTypes from "prop-types";
 import orderDetailsStyles from "../order-details/order-details.module.css";
 import {CloseIcon} from "@ya.praktikum/react-developer-burger-ui-components";
-import ModalOverlay from "../modalIverlay/modal-overlay";
+import ModalOverlay from "../modal-overlay/modal-overlay";
 
 const modalRoot = document.getElementById("modal-root");
 
 const Modal = (props) => {
-
     useEffect(() => {
         const onEsc = document.addEventListener('keydown', function (event) {
             if (event.code === 'Escape') {
-                props.handleEscModal(false);
+               return handleCloseModal();
             }
         });
         return () => {
@@ -21,20 +20,22 @@ const Modal = (props) => {
         };
     }, [])
 
+    const handleCloseModal = () => {
+        props.setVisible(false);
+    }
+
     return ReactDOM.createPortal(
         <>
            <div className={modalStyles.main}
-                onKeyPress={props.closeEsc}
            >
                 <h2 className={orderDetailsStyles.header}>
-                    <CloseIcon onClick={props.handleCloseModal} type="primary"/>
+                    <CloseIcon onClick={handleCloseModal} type="primary"/>
                 </h2>
                 <div className={modalStyles.content}>
                     {props.children}
                 </div>
                 </div>
-            <ModalOverlay handleOverlayModal={props.handleOverlayModal}>
-            </ModalOverlay>
+            <ModalOverlay handleCloseModal={handleCloseModal} />
         </>
         ,
         modalRoot

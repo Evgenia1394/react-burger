@@ -6,9 +6,9 @@ import PropTypes from "prop-types";
 const OrderDetails = () => {
     return (
         <>
-                <div className={orderDetailsStyles.identification}>
+                <h3 className={orderDetailsStyles.identification}>
                     034536
-                </div>
+                </h3>
                 <p className="text text_type_main-default">
                     идентификатор заказа
                 </p>

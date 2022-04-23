@@ -4,7 +4,7 @@ import {CloseIcon, Counter, CurrencyIcon} from "@ya.praktikum/react-developer-bu
 import {burgerItem} from '../burgerItem';
 import IngredientDetails from "../ingredient-details/ingredient-details";
 import PropTypes from "prop-types";
-import Modal from "../Modal/Modal";
+import Modal from "../modal/modal";
 
 const IngredientCard = (props) => {
     const [visible, setVisible] = useState(false);
@@ -13,25 +13,9 @@ const IngredientCard = (props) => {
             setVisible(true);
     }
 
-    const handleCloseModal = () => {
-        setVisible(false);
-    }
-
-    const handleEscModal = (isOpen) => {
-        setVisible(isOpen);
-    }
-
-    //не понимаю, почему не срабатывает повторное открытие того же элемента после срабатывания клика по overlay
-    //отрабатывает корректно только если стоит один обработчик c esc
-
-    const handleOverlayModal = () => {
-        setVisible(false);
-    }
-
     const modal =
-        <Modal handleCloseModal={handleCloseModal}
-               handleEscModal={handleEscModal}
-               handleOverlayModal={handleOverlayModal}
+        <Modal
+            setVisible={setVisible}
         >
         <IngredientDetails
             src={props.data.image}

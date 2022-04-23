@@ -2,31 +2,16 @@ import React, {useState} from 'react';
 import {Button, ConstructorElement, CurrencyIcon, DragIcon} from "@ya.praktikum/react-developer-burger-ui-components";
 import burgerStyles from './burger-constructor.module.css';
 import OrderDetails from "../order-details/order-details";
-import Modal from "../Modal/Modal";
+import Modal from "../modal/modal";
 import {burgerItem} from "../burgerItem";
 import PropTypes from "prop-types";
 
 const BurgerConstructor = (props) => {
     const notBun = props.data.filter(ingredient => (ingredient.type !== 'bun'))
-    const [visibleOrder, setVisibleOrder] = useState(false);
+    const [visible, setVisible] = useState(false);
 
     const handleOpenModal = () => {
-        setVisibleOrder(true);
-    }
-
-    const handleCloseModal = () => {
-        setVisibleOrder(false);
-    }
-
-    const handleEscModal = (isOpen) => {
-        setVisibleOrder(isOpen);
-    }
-
-    //не понимаю, почему не срабатывает повторное открытие того же элемента после срабатывания клика по overlay
-    //отрабатывает корректно только если стоит один обработчик c esc
-
-    const handleOverlayModal = () => {
-        setVisibleOrder(false);
+        setVisible(true);
     }
 
     return (
@@ -75,10 +60,9 @@ const BurgerConstructor = (props) => {
                 <Button type="primary" size="medium" onClick={handleOpenModal}>
                     Оформить заказ
                 </Button>
-                {visibleOrder &&
-                <Modal handleCloseModal={handleCloseModal}
-                       handleEscModal={handleEscModal}
-                       handleOverlayModal={handleOverlayModal}
+                {visible &&
+                <Modal
+                    setVisible={setVisible}
                 >
                     <OrderDetails />
                 </Modal>
