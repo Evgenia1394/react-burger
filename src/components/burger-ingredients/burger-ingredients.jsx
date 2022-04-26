@@ -2,7 +2,7 @@ import React, {useContext, useState} from 'react';
 import {Tab} from "@ya.praktikum/react-developer-burger-ui-components";
 import burgerIngredientsStyles from './burger-ingredients.module.css';
 import IngredientCard from '../ingredient-card/ingredient-card';
-import {IngredientsContext} from "../services/ingredientContext";
+import {IngredientsContext} from "../../services/ingredientContext";
 
 
 const BurgerIngredients = () => {

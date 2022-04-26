@@ -6,13 +6,22 @@ import BurgerConstructor from "../burger-constructor/burger-constructor";
 import appStyles from './app.module.css';
 import ErrorPage from '../error-page/error-page';
 import LoadingPage from "../loading-page/loading-page";
-import {IngredientsContext} from '../services/ingredientContext'
+import {IngredientsContext} from '../../services/ingredientContext';
+import {burgerItem} from '../burgerItem';
+
+export const baseUrl = 'https://norma.nomoreparties.space/api/';
+
+export async function checkResponse(res: Response) {
+    if (!res.ok) {
+        throw new Error(`status: ${res.status}`);
+    }
+    return await res.json();
+}
 
 function App() {
-    const domenUrl = 'https://norma.nomoreparties.space';
 
     const [state, setState] = useState({
-        data: [],
+        data: [] as Promise<[typeof burgerItem]> | [],
         loading: true,
         error: false
     })
@@ -21,12 +30,9 @@ function App() {
         const dataUrl = async () => {
             setState({...state, loading: true})
             try {
-                const res = await fetch(`${domenUrl}/api/ingredients`);
-                if (!res.ok) {
-                    throw new Error(`status: ${res.status}`);
-                }
-                const data = await res.json();
-                setState({...state, data: data.data, loading: false})
+                const res = await fetch(`${baseUrl}ingredients`)
+                const ingredientsData = await checkResponse(res);
+                setState({...state, data: ingredientsData?.data as Promise<[typeof burgerItem]>, loading: false})
             } catch (e) {
                 setState({...state, loading: false, error: true})
             }
@@ -52,8 +58,8 @@ function App() {
                 </h1>
                 <div className={appStyles.wrapper}>
                     <IngredientsContext.Provider value={state.data}>
-                        <BurgerIngredients />
-                        <BurgerConstructor />
+                        <BurgerIngredients/>
+                        <BurgerConstructor/>
                     </IngredientsContext.Provider>
                 </div>
             </>

@@ -3,8 +3,9 @@ import {Button, ConstructorElement, CurrencyIcon, DragIcon} from "@ya.praktikum/
 import burgerStyles from './burger-constructor.module.css';
 import OrderDetails from "../order-details/order-details";
 import Modal from "../modal/modal";
-import {IngredientsContext} from "../services/ingredientContext";
-import {OrderContext} from "../services/orderContext";
+import {IngredientsContext} from "../../services/ingredientContext";
+import {baseUrl} from '../app/App';
+import {checkResponse} from '../app/App';
 
 const BurgerConstructor = () => {
     const [visible, setVisible] = useState(false);
@@ -24,7 +25,6 @@ const BurgerConstructor = () => {
     const totalPrice = bun.price * 2 + priceIngredients;
 
     const dataOrder = async () => {
-        const orderUrl = 'https://norma.nomoreparties.space/api/orders'
         setLoading(true)
 
         let arrId = [bun._id];
@@ -33,20 +33,16 @@ const BurgerConstructor = () => {
         }
 
         try {
-            const res = await fetch(orderUrl, {
+            const res = await fetch(`${baseUrl}orders`, {
                 method: 'POST',
                 body: JSON.stringify({ingredients: arrId}),
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
-
-            if (!res.ok) {
-                throw new Error(`status: ${res.status}`);
-            }
-            const data = await res.json();
+            const orderData = await checkResponse(res);
             setLoading(false);
-            setOrderNumber(data.order.number)
+            setOrderNumber(orderData.order.number);
         } catch (e) {
             setLoading(false);
             setError(true)
@@ -104,14 +100,12 @@ const BurgerConstructor = () => {
                 <Button type="primary" size="medium" onClick={handleOpenModal}>
                     Оформить заказ
                 </Button>
-                <OrderContext.Provider value={orderNumber}>
-                    {visible &&
-                    <Modal
-                        setVisible={setVisible}>
-                        <OrderDetails/>
-                    </Modal>
-                    }
-                </OrderContext.Provider>
+                {visible &&
+                <Modal
+                    setVisible={setVisible}>
+                    <OrderDetails orderNumber={orderNumber}/>
+                </Modal>
+                }
             </div>
         </section>
     )

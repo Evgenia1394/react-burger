@@ -1,14 +1,13 @@
 import {CheckMarkIcon} from "@ya.praktikum/react-developer-burger-ui-components";
-import React, {useContext} from "react";
+import React from "react";
 import orderDetailsStyles from './order-details.module.css'
-import {OrderContext} from "../services/orderContext";
+import {number} from "prop-types";
 
-const OrderDetails = () => {
-    const orderNumber = useContext(OrderContext);
+const OrderDetails = (props) => {
     return (
         <>
             <h3 className={orderDetailsStyles.identification}>
-                {orderNumber}
+                {props.orderNumber}
             </h3>
             <p className="text text_type_main-default">
                 идентификатор заказа
@@ -24,6 +23,10 @@ const OrderDetails = () => {
             </p>
         </>
     )
+}
+
+OrderDetails.propTypes = {
+    orderNumber: number.isRequired,
 }
 
 export default OrderDetails;
