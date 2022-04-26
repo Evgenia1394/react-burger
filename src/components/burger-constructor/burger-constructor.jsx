@@ -1,17 +1,61 @@
-import React, {useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Button, ConstructorElement, CurrencyIcon, DragIcon} from "@ya.praktikum/react-developer-burger-ui-components";
 import burgerStyles from './burger-constructor.module.css';
 import OrderDetails from "../order-details/order-details";
 import Modal from "../modal/modal";
-import {burgerItem} from "../burgerItem";
-import PropTypes from "prop-types";
+import {IngredientsContext} from "../services/ingredientContext";
+import {OrderContext} from "../services/orderContext";
 
-const BurgerConstructor = (props) => {
-    const notBun = props.data.filter(ingredient => (ingredient.type !== 'bun'))
+const BurgerConstructor = () => {
     const [visible, setVisible] = useState(false);
+    const ingredients = useContext(IngredientsContext);
 
-    const handleOpenModal = () => {
-        setVisible(true);
+    const [orderNumber, setOrderNumber] = useState(0);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(false);
+
+    const notBun = ingredients.filter(ingredient => (ingredient.type !== 'bun'))
+    const bun = ingredients.find(ingredient => (ingredient.type === 'bun'))
+
+    let priceIngredients = 0;
+    for (let value of notBun) {
+        priceIngredients += value.price
+    }
+    const totalPrice = bun.price * 2 + priceIngredients;
+
+    const dataOrder = async () => {
+        const orderUrl = 'https://norma.nomoreparties.space/api/orders'
+        setLoading(true)
+
+        let arrId = [bun._id];
+        for (let value of notBun) {
+            arrId.push(value._id)
+        }
+
+        try {
+            const res = await fetch(orderUrl, {
+                method: 'POST',
+                body: JSON.stringify({ingredients: arrId}),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!res.ok) {
+                throw new Error(`status: ${res.status}`);
+            }
+            const data = await res.json();
+            setLoading(false);
+            setOrderNumber(data.order.number)
+        } catch (e) {
+            setLoading(false);
+            setError(true)
+        }
+    }
+
+    const handleOpenModal = async () => {
+        await dataOrder()
+        await setVisible(true);
     }
 
     return (
@@ -20,9 +64,9 @@ const BurgerConstructor = (props) => {
                 <ConstructorElement
                     type="top"
                     isLocked={true}
-                    text={`${props.data[0].name} (верх)`}
-                    price={props.data[0].price}
-                    thumbnail={props.data[0].image}
+                    text={`${bun.name} (верх)`}
+                    price={bun.price}
+                    thumbnail={bun.image}
                 />
             </div>
             <div className={burgerStyles.wrapper}>
@@ -45,14 +89,14 @@ const BurgerConstructor = (props) => {
                 <ConstructorElement
                     type="bottom"
                     isLocked={true}
-                    text={`${props.data[0].name} (низ)`}
-                    price={props.data[0].price}
-                    thumbnail={props.data[0].image}
+                    text={`${bun.name} (низ)`}
+                    price={bun.price}
+                    thumbnail={bun.image}
                 />
             </div>
             <div className={burgerStyles.result}>
                 <div className='text text_type_digits-medium'>
-                    610
+                    {totalPrice}
                 </div>
                 <div className={burgerStyles.diamond}>
                     <CurrencyIcon type="primary"/>
@@ -60,20 +104,17 @@ const BurgerConstructor = (props) => {
                 <Button type="primary" size="medium" onClick={handleOpenModal}>
                     Оформить заказ
                 </Button>
-                {visible &&
-                <Modal
-                    setVisible={setVisible}
-                >
-                    <OrderDetails/>
-                </Modal>
-                }
+                <OrderContext.Provider value={orderNumber}>
+                    {visible &&
+                    <Modal
+                        setVisible={setVisible}>
+                        <OrderDetails/>
+                    </Modal>
+                    }
+                </OrderContext.Provider>
             </div>
         </section>
     )
-};
-
-BurgerConstructor.propTypes = {
-    data: PropTypes.arrayOf(burgerItem).isRequired
 };
 
 export default BurgerConstructor;

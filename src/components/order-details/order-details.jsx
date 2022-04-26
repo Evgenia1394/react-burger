@@ -1,12 +1,14 @@
 import {CheckMarkIcon} from "@ya.praktikum/react-developer-burger-ui-components";
-import React from "react";
+import React, {useContext} from "react";
 import orderDetailsStyles from './order-details.module.css'
+import {OrderContext} from "../services/orderContext";
 
 const OrderDetails = () => {
+    const orderNumber = useContext(OrderContext);
     return (
         <>
             <h3 className={orderDetailsStyles.identification}>
-                034536
+                {orderNumber}
             </h3>
             <p className="text text_type_main-default">
                 идентификатор заказа

@@ -6,6 +6,7 @@ import BurgerConstructor from "../burger-constructor/burger-constructor";
 import appStyles from './app.module.css';
 import ErrorPage from '../error-page/error-page';
 import LoadingPage from "../loading-page/loading-page";
+import {IngredientsContext} from '../services/ingredientContext'
 
 function App() {
     const domenUrl = 'https://norma.nomoreparties.space';
@@ -50,8 +51,10 @@ function App() {
                     Соберите бургер
                 </h1>
                 <div className={appStyles.wrapper}>
-                    <BurgerIngredients data={state.data}/>
-                    <BurgerConstructor data={state.data}/>
+                    <IngredientsContext.Provider value={state.data}>
+                        <BurgerIngredients />
+                        <BurgerConstructor />
+                    </IngredientsContext.Provider>
                 </div>
             </>
             }
