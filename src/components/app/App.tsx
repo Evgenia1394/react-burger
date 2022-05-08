@@ -6,8 +6,12 @@ import BurgerConstructor from "../burger-constructor/burger-constructor";
 import appStyles from './app.module.css';
 import ErrorPage from '../error-page/error-page';
 import LoadingPage from "../loading-page/loading-page";
-import {IngredientsContext} from '../../services/ingredientContext';
-import {burgerItem} from '../burgerItem';
+import {addIngredient, getFeed} from "../../services/thunks/thunks";
+import {useDispatch, useSelector} from "react-redux";
+import {defaultAllIngredientsState, defaultConstructorState} from "../../services/reducers/rootReducer";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import {ADD_INGREDIENT, INCREASE_COUNT} from "../../services/actions/allActions";
 
 export const baseUrl = 'https://norma.nomoreparties.space/api/';
 
@@ -19,54 +23,65 @@ export async function checkResponse(res: Response) {
 }
 
 function App() {
+    const [isLoading, setIsLoading] = useState(true);
 
-    const [state, setState] = useState({
-        data: [] as Promise<[typeof burgerItem]> | [],
-        loading: true,
-        error: false
-    })
+    const {feedIngredientsRequest, feedIngredientsFailed, feedIngredients} =
+        useSelector((state: typeof defaultAllIngredientsState) => state.allIngredientsReducer);
+    // @ts-ignore
+    const {constructorIngredient} = useSelector((state)  => state.draggableConstructorReducer);
+
+    const dispatch = useDispatch();
 
     useEffect(() => {
-        const dataUrl = async () => {
-            setState({...state, loading: true})
-            try {
-                const res = await fetch(`${baseUrl}ingredients`)
-                const ingredientsData = await checkResponse(res);
-                setState({...state, data: ingredientsData?.data as Promise<[typeof burgerItem]>, loading: false})
-            } catch (e) {
-                setState({...state, loading: false, error: true})
-            }
-        }
-        dataUrl()
+        dispatch(getFeed() as any);
     }, [])
+
+    useEffect(() => {
+        if (feedIngredients) {
+            setIsLoading(false)
+        }
+    }, [feedIngredientsRequest])
+
+    if (isLoading) {
+        return <LoadingPage />;
+    }
+
+    const onDropHandler = async (item: any) => {
+        dispatch(addIngredient(item, constructorIngredient) as any)
+    };
 
     return (
         <>
-            {state.error &&
+            {!isLoading &&
+        <>
+            {feedIngredientsFailed &&
             <ErrorPage/>
             }
-            {state.loading &&
+            {feedIngredientsRequest &&
             <LoadingPage/>
             }
-            {!state.loading && !state.error &&
+            {!feedIngredientsRequest && !feedIngredientsFailed &&
             <>
-                <div className={appStyles.wrapperHeader}>
-                    <AppHeader/>
-                </div>
-                <h1 id="1" className={appStyles.titleMargin}>
-                    Соберите бургер
-                </h1>
-                <div className={appStyles.wrapper}>
-                    <IngredientsContext.Provider value={state.data}>
-                        <BurgerIngredients/>
-                        <BurgerConstructor/>
-                    </IngredientsContext.Provider>
-                </div>
+                <DndProvider backend={HTML5Backend}>
+                    <div className={appStyles.wrapperHeader}>
+                        <AppHeader/>
+                    </div>
+                    <h1 id="1" className={appStyles.titleMargin}>
+                        Соберите бургер
+                    </h1>
+                    <div className={appStyles.wrapper}>
+                        <BurgerIngredients />
+                        <BurgerConstructor onDropHandler={onDropHandler}/>
+                    </div>
+                </DndProvider>
             </>
             }
         </>
+            }
+        </>
     );
-
 };
 
 export default App;
+
+

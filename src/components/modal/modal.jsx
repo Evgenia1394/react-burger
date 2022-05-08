@@ -5,10 +5,14 @@ import PropTypes from "prop-types";
 import orderDetailsStyles from "../order-details/order-details.module.css";
 import {CloseIcon} from "@ya.praktikum/react-developer-burger-ui-components";
 import ModalOverlay from "../modal-overlay/modal-overlay";
+import {useDispatch} from "react-redux";
+import {CLEAR_INGREDIENT, CLEAR_ORDER} from "../../services/actions/allActions";
 
 const modalRoot = document.getElementById("modal-root");
 
 const Modal = (props) => {
+
+    const dispatch = useDispatch();
     useEffect(() => {
         const onEsc = (e) => {
             if (e.key === 'Escape') {
@@ -22,6 +26,12 @@ const Modal = (props) => {
 
     const handleCloseModal = () => {
         props.setVisible(false);
+        dispatch({
+            type: CLEAR_ORDER
+        })
+        dispatch({
+            type: CLEAR_INGREDIENT
+        })
     }
 
     return ReactDOM.createPortal(
