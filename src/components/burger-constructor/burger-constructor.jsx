@@ -10,11 +10,14 @@ import burgerStyles from './burger-constructor.module.css';
 import OrderDetails from "../order-details/order-details";
 import Modal from "../modal/modal";
 import {useDispatch, useSelector} from "react-redux";
-import {useDrop} from "react-dnd";
-import {DECREASE_COUNT, SORT_INGREDIENT} from "../../services/actions/allActions";
-import {postOrder} from "../../services/thunks/thunks";
+import {useDrag, useDrop} from "react-dnd";
+import {DECREASE_COUNT, SORT_INGREDIENT} from "../../services/actions/constructor-actions";
+
+import {postOrder} from "../../services/actions/thunks";
+import {uuidv4} from "../../utils/uuidv4";
 
 const BurgerConstructor = (props) => {
+    const {onDropHandler} = props;
 
     const [visible, setVisible] = useState(false);
     const {constructorIngredient} = useSelector((state) => state.draggableConstructorReducer);
@@ -25,23 +28,16 @@ const BurgerConstructor = (props) => {
 
     const [currentIngredient, setCurrentIngredient] = useState(null);
 
-    const notBun = constructorIngredient.filter(ingredient => (ingredient.type !== 'bun')).filter(ingredient => ingredient.count > 0);
+    const notBun = constructorIngredient.filter(ingredient => (ingredient.type !== 'bun' && ingredient.count > 0))
     const bun = constructorIngredient.find(ingredient => (ingredient.type === 'bun'));
     const dispatch = useDispatch();
 
     const [, dropTarget] = useDrop({
         accept: 'ingredients',
         drop(itemId) {
-            props.onDropHandler(itemId);
+            onDropHandler(itemId);
         }
     })
-
-    const uuidv4 = () => {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
-        });
-    }
 
     const handleClose = (id) => {
         dispatch({
@@ -71,7 +67,14 @@ const BurgerConstructor = (props) => {
         await setVisible(true);
     }
 
-//функции для внутреннего днд
+//функции для внутреннего перемещения dragStartHandler и dropHandler
+//срабатывают через раз при нажатии на картинку или зону между DragIcon и ConstructorElement,
+//не понимаю, почему не срабатывает в остальных случаях, нужна помощь, почему не всегда работает?
+//при перетаскивании из левого контейнера в правый
+//в файле thunks.js при экшене ADD_INGREDIENT добавляю поле order: array.length (=длине массива стейта конструктора)(строка 16)
+//+ написала отдельный экшен в файле constructor-reducer.js SORT_INGREDIENT,
+//меняюший местами order drag-элемента и order drop-элемента (строка 48);
+
     const dragStartHandler = (e, dragIngredient) => {
         setCurrentIngredient(dragIngredient)
     }
@@ -110,8 +113,7 @@ const BurgerConstructor = (props) => {
                     />
                     }
                 </div>
-                <div className={burgerStyles.wrapper}
-                     ref={dropTarget}>
+                <div className={burgerStyles.wrapper} ref={dropTarget}>
                     {notBun.length ?
                         notBun.sort(sortIngredients).map((ingredient) => (
                             <div className={burgerStyles.wrapperItem}
@@ -120,23 +122,19 @@ const BurgerConstructor = (props) => {
                                 onDragOver={e => dragOverHandler(e)}
                                 onDrop={e => dropHandler(e, ingredient)}
                             >
-                                <div className={burgerStyles.dragIcon}>
+                                <div className={burgerStyles.dragIcon} >
                                     <DragIcon type="primary"/>
                                 </div>
-                                <div className={burgerStyles.product}
-                                >
+                                <div className={burgerStyles.product}>
                                     <ConstructorElement
-                                        draggable={true}
                                         handleClose={e => handleClose(ingredient._id)}
                                         type={ingredient.type}
                                         isLocked={ingredient.type === 'bun'}
                                         text={ingredient.name}
                                         price={ingredient.price}
                                         thumbnail={ingredient.image}
+                                        draggable={true}
                                     />
-                                    <div className={burgerStyles.ingredientCount}>
-                                        <Counter count={ingredient.count} size="small" />
-                                    </div>
                                 </div>
                             </div>
                         )) :

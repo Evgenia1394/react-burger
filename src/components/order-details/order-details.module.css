@@ -2,6 +2,8 @@
     display: flex;
     justify-content: end;
     cursor: pointer;
+    margin-top: 0;
+    margin-bottom: 0;
 }
 .identification {
     font-family: 'Iceland';
@@ -11,14 +13,14 @@
     line-height: 120px;
     text-shadow: 0px 0px 16px rgba(51, 51, 255, 0.25), 0px 0px 8px rgba(51, 51, 255, 0.25), 0px 4px 32px rgba(51, 51, 255, 0.5);
     margin-bottom: 32px;
+    margin-top: 39px;
 }
 
 .check {
     margin: 60px 0;
     background-color: rgba(51, 51, 255, 0.25);
     border-radius: 50%;
-    height: 60px;
-    width: 60px;
+    height: 120px;
     line-height: 70px;
     text-align: center;
     display: inline-block;

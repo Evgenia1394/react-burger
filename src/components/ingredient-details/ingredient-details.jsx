@@ -3,6 +3,7 @@ import React from "react";
 import PropTypes from "prop-types";
 
 const IngredientDetails = (props) => {
+    const {src, name, calories, proteins, fat, carbohydrates} = props;
     return (
         <>
             <div className={ingredientDetailsStyles.wrapper}>
@@ -11,9 +12,11 @@ const IngredientDetails = (props) => {
                         Детали ингредиента
                     </p>
                 </h2>
-                <img src={props.src} alt={props.name}/>
+                <div className={ingredientDetailsStyles.productImage}>
+                    <img src={src} alt={name}/>
+                </div>
                 <p className="text text_type_main-medium">
-                    {props.name}
+                    {name}
                 </p>
                 <div className={ingredientDetailsStyles.composition}>
                     <div className={ingredientDetailsStyles.compositionItem}>
@@ -21,7 +24,7 @@ const IngredientDetails = (props) => {
                             Калории, ккал
                         </p>
                         <p className="text text_type_main-default text_color_inactive text text_type_digits-default">
-                            {props.calories}
+                            {calories}
                         </p>
                     </div>
                     <div>
@@ -29,7 +32,7 @@ const IngredientDetails = (props) => {
                             Белки, г
                         </p>
                         <p className="text text_type_main-default text_color_inactive text text_type_digits-default">
-                            {props.proteins}
+                            {proteins}
                         </p>
                     </div>
                     <div>
@@ -37,7 +40,7 @@ const IngredientDetails = (props) => {
                             Жиры, г
                         </p>
                         <p className="text text_type_main-default text_color_inactive text text_type_digits-default">
-                            {props.fat}
+                            {fat}
                         </p>
                     </div>
                     <div>
@@ -45,7 +48,7 @@ const IngredientDetails = (props) => {
                             Углеводы, г
                         </p>
                         <p className="text text_type_main-default text_color_inactive text text_type_digits-default">
-                            {props.carbohydrates}
+                            {carbohydrates}
                         </p>
                     </div>
                 </div>

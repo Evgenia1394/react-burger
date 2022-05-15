@@ -6,14 +6,11 @@ import BurgerConstructor from "../burger-constructor/burger-constructor";
 import appStyles from './app.module.css';
 import ErrorPage from '../error-page/error-page';
 import LoadingPage from "../loading-page/loading-page";
-import {addIngredient, getFeed} from "../../services/thunks/thunks";
+import {addIngredient, getFeed} from "../../services/actions/thunks";
 import {useDispatch, useSelector} from "react-redux";
-import {defaultAllIngredientsState, defaultConstructorState} from "../../services/reducers/rootReducer";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import {ADD_INGREDIENT, INCREASE_COUNT} from "../../services/actions/allActions";
-
-export const baseUrl = 'https://norma.nomoreparties.space/api/';
+import {defaultAllIngredientsState} from "../../services/reducers/all-ingredients-reducer";
 
 export async function checkResponse(res: Response) {
     if (!res.ok) {

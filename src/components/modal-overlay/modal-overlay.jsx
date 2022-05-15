@@ -3,13 +3,13 @@ import modalOverlayStyles from './modal-overlay.module.css'
 import PropTypes from "prop-types";
 
 const ModalOverlay = (props) => {
-
+    const {handleCloseModal, children} = props;
     return (
         <div className={modalOverlayStyles.main}
-             onClick={props.handleCloseModal}
+             onClick={handleCloseModal}
         >
             <div className={modalOverlayStyles.content}>
-                {props.children}
+                {children}
             </div>
         </div>
     );

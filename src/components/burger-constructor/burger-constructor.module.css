@@ -3,6 +3,7 @@
     align-items: center;
     gap: 13px;
     padding: 0 16px;
+    cursor: pointer;
 }
 
 .wrapper {
@@ -79,3 +80,7 @@
 .dragIcon {
     cursor: pointer;
 }
+
+/*.product > burger-constructor_product {*/
+/*    cursor: pointer;*/
+/*}*/

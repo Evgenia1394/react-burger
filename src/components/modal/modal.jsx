@@ -6,12 +6,13 @@ import orderDetailsStyles from "../order-details/order-details.module.css";
 import {CloseIcon} from "@ya.praktikum/react-developer-burger-ui-components";
 import ModalOverlay from "../modal-overlay/modal-overlay";
 import {useDispatch} from "react-redux";
-import {CLEAR_INGREDIENT, CLEAR_ORDER} from "../../services/actions/allActions";
+import {CLEAR_ORDER} from "../../services/actions/order-actions";
+import {CLEAR_INGREDIENT} from "../../services/actions/ingredient-actions";
 
 const modalRoot = document.getElementById("modal-root");
 
 const Modal = (props) => {
-
+    const {setVisible, children} = props;
     const dispatch = useDispatch();
     useEffect(() => {
         const onEsc = (e) => {
@@ -25,7 +26,7 @@ const Modal = (props) => {
     }, [])
 
     const handleCloseModal = () => {
-        props.setVisible(false);
+        setVisible(false);
         dispatch({
             type: CLEAR_ORDER
         })
@@ -36,13 +37,12 @@ const Modal = (props) => {
 
     return ReactDOM.createPortal(
         <>
-            <div className={modalStyles.main}
-            >
+            <div className={modalStyles.main} style={props.isIngredientDetail ? {height: '538px', top: 'calc(50vh - 269px)'} :  {height: '718px'}}>
                 <h2 className={orderDetailsStyles.header}>
                     <CloseIcon onClick={handleCloseModal} type="primary"/>
                 </h2>
                 <div className={modalStyles.content}>
-                    {props.children}
+                    {children}
                 </div>
             </div>
             <ModalOverlay handleCloseModal={handleCloseModal}/>
@@ -50,7 +50,7 @@ const Modal = (props) => {
         ,
         modalRoot
     );
-};
+}
 
 Modal.propTypes = {
     children: PropTypes.node,

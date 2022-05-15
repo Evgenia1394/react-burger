@@ -1,18 +1,19 @@
 import {
-    ADD_INGREDIENT, DECREASE_COUNT,
-    GET_ALLINGREDIENTS,
+    GET_ALLINGREDIENTS_REQUEST,
     GET_FEED_FAILED,
-    GET_FEED_SUCCESS, GET_ORDER_FAILED, GET_ORDER_SUCCESS,
-    INCREASE_COUNT, POST_ORDER, REPLACE_BUN
-} from "../actions/allActions";
-import {baseUrl} from '../../components/app/App'
+    GET_FEED_SUCCESS
+} from "./all-ingredients-actions";
+import {ADD_INGREDIENT, INCREASE_COUNT, REPLACE_BUN} from "./constructor-actions";
+import {GET_ORDER_FAILED, GET_ORDER_SUCCESS, POST_ORDER} from "./order-actions";
+import {baseUrl} from "../../utils/burger-api";
+import {getIngredientsApi} from "../../utils/ingredients-api";
 
 export function addIngredient(item, array) {
     return async function (dispatch) {
         if (item.type !== 'bun') {
             await dispatch({
                 type: ADD_INGREDIENT,
-                payload: {... item, order: array.length}
+                payload: {...item, order: array.length}
             })
             await dispatch({
                 type: INCREASE_COUNT,
@@ -42,12 +43,11 @@ export function addIngredient(item, array) {
 
 export function getFeed() {
     return function (dispatch) {
-        return fetch(`${baseUrl}ingredients`)
+        dispatch({
+            type: GET_ALLINGREDIENTS_REQUEST
+        })
+        return getIngredientsApi
             .then(async res => {
-                dispatch({
-                    type: GET_ALLINGREDIENTS
-                })
-
                 if (res && res.ok) {
                     dispatch({
                         type: GET_FEED_SUCCESS,
@@ -68,6 +68,9 @@ export function getFeed() {
 
 export function postOrder(arrId) {
     return function (dispatch) {
+        dispatch({
+            type: POST_ORDER
+        })
         return fetch(`${baseUrl}orders`, {
             method: 'POST',
             body: JSON.stringify({ingredients: arrId}),
@@ -76,10 +79,6 @@ export function postOrder(arrId) {
             }
         })
             .then(async res => {
-                dispatch({
-                    type: POST_ORDER
-                })
-
                 if (res && res.ok) {
                     dispatch({
                         type: GET_ORDER_SUCCESS,
@@ -91,10 +90,10 @@ export function postOrder(arrId) {
                     })
                 }
             }).catch(err => {
-                dispatch({
-                    type: GET_ORDER_FAILED
-                })
+            dispatch({
+                type: GET_ORDER_FAILED
             })
+        })
     }
 }
 

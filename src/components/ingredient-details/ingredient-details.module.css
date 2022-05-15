@@ -18,9 +18,22 @@
     display: flex;
     justify-content: space-between;
     margin-bottom: 15px;
+    position: absolute;
+    top: 32px;
 }
 .wrapper {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 }
+.productImage {
+    display: flex;
+    justify-content: center;
+    margin-top: 12px;
+}
+
+.productImage> img {
+    height: 240px;
+    width: 480px
+}
+
