@@ -38,6 +38,8 @@ const IngredientCard = (props) => {
             payload: data
         })
         setVisible(true);
+        console.log('count', count, '_id', _id, 'constructorIngredient', constructorIngredient)
+
     }
 
     const modal =

@@ -15,6 +15,7 @@ import {DECREASE_COUNT, SORT_INGREDIENT} from "../../services/actions/constructo
 
 import {postOrder} from "../../services/actions/thunks";
 import {uuidv4} from "../../utils/uuidv4";
+import {ConstructorIngredient} from "../constructor-ingredient/constructor-ingredient";
 
 const BurgerConstructor = (props) => {
     const {onDropHandler} = props;
@@ -39,13 +40,6 @@ const BurgerConstructor = (props) => {
         }
     })
 
-    const handleClose = (id) => {
-        dispatch({
-            type: DECREASE_COUNT,
-            id: id
-        })
-    }
-
     let priceIngredients = 0;
     for (let value of notBun) {
         priceIngredients += value.price * value.count;
@@ -67,30 +61,22 @@ const BurgerConstructor = (props) => {
         await setVisible(true);
     }
 
-//функции для внутреннего перемещения dragStartHandler и dropHandler
-//срабатывают через раз при нажатии на картинку или зону между DragIcon и ConstructorElement,
-//не понимаю, почему не срабатывает в остальных случаях, нужна помощь, почему не всегда работает?
-//при перетаскивании из левого контейнера в правый
-//в файле thunks.js при экшене ADD_INGREDIENT добавляю поле order: array.length (=длине массива стейта конструктора)(строка 16)
-//+ написала отдельный экшен в файле constructor-reducer.js SORT_INGREDIENT,
-//меняюший местами order drag-элемента и order drop-элемента (строка 48);
-
-    const dragStartHandler = (e, dragIngredient) => {
-        setCurrentIngredient(dragIngredient)
-    }
-    const dragOverHandler = (e, ingredient) => {
-        e.preventDefault();
-    }
-    const dropHandler = (e, dropIngredient) => {
-        e.preventDefault();
-        dispatch({
-            type: SORT_INGREDIENT,
-            payload: {
-                dragIngredient: currentIngredient,
-                dropIngredient: dropIngredient,
-            }
-        })
-    }
+    // const dragStartHandler = (e, dragIngredient) => {
+    //     setCurrentIngredient(dragIngredient)
+    // }
+    // const dragOverHandler = (e, ingredient) => {
+    //     e.preventDefault();
+    // }
+    // const dropHandler = (e, dropIngredient) => {
+    //     e.preventDefault();
+    //     dispatch({
+    //         type: SORT_INGREDIENT,
+    //         payload: {
+    //             dragIngredient: currentIngredient,
+    //             dropIngredient: dropIngredient,
+    //         }
+    //     })
+    // }
     const sortIngredients = (a, b) => {
         if (a.order > b.order) {
             return 1
@@ -115,27 +101,9 @@ const BurgerConstructor = (props) => {
                 </div>
                 <div className={burgerStyles.wrapper} ref={dropTarget}>
                     {notBun.length ?
-                        notBun.sort(sortIngredients).map((ingredient) => (
-                            <div className={burgerStyles.wrapperItem}
-                                 key={uuidv4()}
-                                onDragStart={e => dragStartHandler(e, ingredient)}
-                                onDragOver={e => dragOverHandler(e)}
-                                onDrop={e => dropHandler(e, ingredient)}
-                            >
-                                <div className={burgerStyles.dragIcon} >
-                                    <DragIcon type="primary"/>
-                                </div>
-                                <div className={burgerStyles.product}>
-                                    <ConstructorElement
-                                        handleClose={e => handleClose(ingredient._id)}
-                                        type={ingredient.type}
-                                        isLocked={ingredient.type === 'bun'}
-                                        text={ingredient.name}
-                                        price={ingredient.price}
-                                        thumbnail={ingredient.image}
-                                        draggable={true}
-                                    />
-                                </div>
+                        notBun.sort(sortIngredients).map((ingredient, id) => (
+                            <div key={uuidv4()}>
+                                <ConstructorIngredient ingredient={ingredient} />
                             </div>
                         )) :
                         <p className={burgerStyles.notIngredients}>

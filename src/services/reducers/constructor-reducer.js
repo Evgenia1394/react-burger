@@ -46,16 +46,20 @@ export const draggableConstructorReducer = (state = defaultConstructorState, act
             };
         }
         case SORT_INGREDIENT: {
-            console.log('SORT_INGREDIENT сработал')
             return {
                 ...state,
                 constructorIngredient: state.constructorIngredient.map(item => {
+                    if (item._id !== action.payload.dropIngredient._id) {
+                        return {...item}
+                    }
                     if (item._id === action.payload.dropIngredient._id) {
-                        return {...item, order: action.payload.dragIngredient.order}
+                        return {...item, order: action.payload.dragIngredient.order, count: action.payload.dropIngredient.count}
                     }
                     if (item._id = action.payload.dragIngredient._id) {
-                        return {...item, order: action.payload.dropIngredient.order}
-                    }})
+                        return {...item, order: action.payload.dropIngredient.order, count: action.payload.dragIngredient.count}
+                    }
+                })
+
             };
         }
         default:
