@@ -13,7 +13,7 @@ export function addIngredient(item, array) {
         if (item.type !== 'bun') {
             await dispatch({
                 type: ADD_INGREDIENT,
-                payload: {...item, order: array.length}
+                payload: {...item}
             })
             await dispatch({
                 type: INCREASE_COUNT,

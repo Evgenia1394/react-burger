@@ -11,14 +11,12 @@ import OrderDetails from "../order-details/order-details";
 import Modal from "../modal/modal";
 import {useDispatch, useSelector} from "react-redux";
 import {useDrag, useDrop} from "react-dnd";
-import {DECREASE_COUNT, SORT_INGREDIENT} from "../../services/actions/constructor-actions";
 
 import {postOrder} from "../../services/actions/thunks";
 import {uuidv4} from "../../utils/uuidv4";
 import {ConstructorIngredient} from "../constructor-ingredient/constructor-ingredient";
 
-const BurgerConstructor = (props) => {
-    const {onDropHandler} = props;
+const BurgerConstructor = ({onDropHandler}) => {
 
     const [visible, setVisible] = useState(false);
     const {constructorIngredient} = useSelector((state) => state.draggableConstructorReducer);
@@ -61,30 +59,6 @@ const BurgerConstructor = (props) => {
         await setVisible(true);
     }
 
-    // const dragStartHandler = (e, dragIngredient) => {
-    //     setCurrentIngredient(dragIngredient)
-    // }
-    // const dragOverHandler = (e, ingredient) => {
-    //     e.preventDefault();
-    // }
-    // const dropHandler = (e, dropIngredient) => {
-    //     e.preventDefault();
-    //     dispatch({
-    //         type: SORT_INGREDIENT,
-    //         payload: {
-    //             dragIngredient: currentIngredient,
-    //             dropIngredient: dropIngredient,
-    //         }
-    //     })
-    // }
-    const sortIngredients = (a, b) => {
-        if (a.order > b.order) {
-            return 1
-        } else {
-            return -1
-        }
-    }
-
     return (
         <section className={burgerStyles.constructor}>
             <div className={burgerStyles.constructorContent}>
@@ -101,11 +75,25 @@ const BurgerConstructor = (props) => {
                 </div>
                 <div className={burgerStyles.wrapper} ref={dropTarget}>
                     {notBun.length ?
-                        notBun.sort(sortIngredients).map((ingredient, id) => (
-                            <div key={uuidv4()}>
-                                <ConstructorIngredient ingredient={ingredient} />
-                            </div>
-                        )) :
+                        notBun.map((ingredient, id) => {
+                            if (ingredient.count > 1) {
+                                let array = []
+                                let count = ingredient.count
+                                for (count; count !== 0; count--) {
+                                    array.push(
+                                        <div key={uuidv4()}>
+                                            <ConstructorIngredient ingredient={ingredient}/>
+                                        </div>)
+                                }
+                                return array
+                            }
+
+                            return (
+                                <div key={uuidv4()}>
+                                    <ConstructorIngredient ingredient={ingredient}/>
+                                </div>
+                            )
+                        }) :
                         <p className={burgerStyles.notIngredients}>
                             Перетащи ингредиенты в бургер
                         </p>

@@ -2,20 +2,17 @@ import burgerStyles from "../burger-constructor/burger-constructor.module.css";
 import {ConstructorElement, DragIcon} from "@ya.praktikum/react-developer-burger-ui-components";
 import React, {useRef, useState} from "react";
 import {useDrag, useDrop} from "react-dnd";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {DECREASE_COUNT, SORT_INGREDIENT} from "../../services/actions/constructor-actions";
 
 export const ConstructorIngredient = (props) => {
 
     const [dropItem, setDropItem] = useState(null);
+    const {constructorIngredient} = useSelector((state) => state.draggableConstructorReducer);
     const ref = useRef(null);
     const item = props.ingredient;
     const dispatch = useDispatch();
 
-    // const dropHandler = (e, dropIngredient) => {
-    //     e.preventDefault();
-    //     setDropItem(dropIngredient)
-    // }
     const [, dragRef] = useDrag({
         type: "constructor",
         item: item,
@@ -59,7 +56,6 @@ export const ConstructorIngredient = (props) => {
                 price={props.ingredient.price}
                 thumbnail={props.ingredient.image}
                 draggable={true}
-                // onDrop={e => dropHandler(e, props.ingredient)}
             />
         </div>
     </div>

@@ -17,8 +17,8 @@ const IngredientCard = (props) => {
     const dispatch = useDispatch();
 
     const count = constructorIngredient.filter(ingredient => (ingredient._id === _id))
-        .filter(ingredient => ingredient.type !== 'bun')[0] ?
-        constructorIngredient.filter(ingredient => ingredient._id === _id)[0].count : 0;
+            .filter(ingredient => ingredient.type !== 'bun')[0] ?
+            constructorIngredient.filter(ingredient => ingredient._id === _id)[0].count : 0;
 
     const bunCount = constructorIngredient.filter(ingredient => (ingredient._id === _id))
         .filter(ingredient => ingredient.type === 'bun')[0] ? 1 : 0;
@@ -38,8 +38,6 @@ const IngredientCard = (props) => {
             payload: data
         })
         setVisible(true);
-        console.log('count', count, '_id', _id, 'constructorIngredient', constructorIngredient)
-
     }
 
     const modal =

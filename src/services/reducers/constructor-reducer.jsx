@@ -25,9 +25,9 @@ export const draggableConstructorReducer = (state = defaultConstructorState, act
             return {
                 ...state,
                 constructorIngredient: state.constructorIngredient.map(ingredient =>
-                    ingredient._id === action.id ? ingredient.count !== 0 ?
+                    ingredient._id === action.id ? (ingredient.count !== 0 || ingredient.count !== 1 ) ?
                         { ...ingredient, count: ingredient.count -=1} : null : ingredient,
-                ).filter(item => item !== null)
+                ).filter(item => Boolean(item) && !!item.count)
             };
         }
         case ADD_INGREDIENT: {
@@ -46,22 +46,21 @@ export const draggableConstructorReducer = (state = defaultConstructorState, act
             };
         }
         case SORT_INGREDIENT: {
+            const orderedIngredients = [];
+            state.constructorIngredient.forEach((ingredient) => {
+                if (ingredient._id === action.payload.dropIngredient._id) {
+                    return orderedIngredients.push(action.payload.dragIngredient)
+                } else if (ingredient._id === action.payload.dragIngredient._id) {
+                    return orderedIngredients.push(action.payload.dropIngredient)
+                }
+                return orderedIngredients.push(ingredient);
+            })
+
             return {
                 ...state,
-                constructorIngredient: state.constructorIngredient.map(item => {
-                    if (item._id !== action.payload.dropIngredient._id) {
-                        return {...item}
-                    }
-                    if (item._id === action.payload.dropIngredient._id) {
-                        return {...item, order: action.payload.dragIngredient.order, count: action.payload.dropIngredient.count}
-                    }
-                    if (item._id = action.payload.dragIngredient._id) {
-                        return {...item, order: action.payload.dropIngredient.order, count: action.payload.dragIngredient.count}
-                    }
-                })
-
+                constructorIngredient: orderedIngredients
+                }
             };
-        }
         default:
             return state;
     }
