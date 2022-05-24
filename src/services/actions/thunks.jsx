@@ -7,6 +7,21 @@ import {ADD_INGREDIENT, INCREASE_COUNT, REPLACE_BUN} from "./constructor-actions
 import {GET_ORDER_FAILED, GET_ORDER_SUCCESS, POST_ORDER} from "./order-actions";
 import {baseUrl} from "../../utils/burger-api";
 import {getIngredientsApi} from "../../utils/ingredients-api";
+import {GET_EMAIL_FAILED, GET_EMAIL_SUCCESS, POST_EMAIL} from "./forgot-password-actions";
+import {POST_RESET_PASSWORD, RESET_PASSWORD_FAILED, RESET_PASSWORD_SUCCESS} from "./reset-password-actions";
+import {POST_REGISTRATION, REGISTRATION_FAILED, REGISTRATION_SUCCESS} from "./registration-actions";
+import {LOGIN_FAILED, LOGIN_SUCCESS, POST_LOGIN} from "./login-actions";
+import {POST_TOKEN, TOKEN_FAILED, TOKEN_SUCCESS} from "./new-token-actions";
+import {LOGOUT_FAILED, LOGOUT_SUCCESS, POST_LOGOUT} from "./logout-actions";
+import {
+    EDIT_USER,
+    GET_USER,
+    USER_FAILED,
+    USER_SUCCESS
+} from "./user-info-actions";
+import getCookie from "../../utils/get-cookie";
+import {useDispatch} from "react-redux";
+import {useHistory} from "react-router-dom";
 
 export function addIngredient(item, array) {
     return async function (dispatch) {
@@ -96,5 +111,308 @@ export function postOrder(arrId) {
         })
     }
 }
+
+export function postEmail(email) {//послать имейл для восстановления пароля
+    return function (dispatch) {
+        dispatch({
+            type: POST_EMAIL
+        })
+        return fetch(`${baseUrl}password-reset`, {
+            method: 'POST',
+            body: JSON.stringify({email: email}),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(async res => {
+                if (res && res.ok) {
+                    dispatch({
+                        type: GET_EMAIL_SUCCESS,
+                        feed: await res.json()
+                    })
+                } else {
+                    dispatch({
+                        type: GET_EMAIL_FAILED
+                    })
+                }
+            }).catch(err => {
+                dispatch({
+                    type: GET_EMAIL_FAILED
+                })
+            })
+    }
+}
+
+export function resetPassword(password, token) {//токен из почты+новый пароль
+    return function (dispatch) {
+        dispatch({
+            type: POST_RESET_PASSWORD
+        })
+        return fetch(`${baseUrl}password-reset/reset`, {
+            method: 'POST',
+            body: JSON.stringify({
+                password: password,
+                token: token
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(async res => {
+                if (res && res.ok) {
+                    dispatch({
+                        type: RESET_PASSWORD_SUCCESS,
+                        feed: await res.json()
+                    })
+                } else {
+                    dispatch({
+                        type: RESET_PASSWORD_FAILED
+                    })
+                }
+            }).catch(err => {
+                dispatch({
+                    type: RESET_PASSWORD_FAILED
+                })
+            })
+    }
+}
+
+export function registrationNew(email, password, name) {
+    return function (dispatch) {
+        dispatch({
+            type: POST_REGISTRATION
+        })
+        return fetch(`${baseUrl}auth/register`, {
+            method: 'POST',
+            body: JSON.stringify({
+                email: email,
+                password: password,
+                name: name
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(async res => {
+                if (res && res.ok) {
+                    dispatch({
+                        type: REGISTRATION_SUCCESS,
+                        feed: await res.json()
+                    })
+                } else {
+                    dispatch({
+                        type: REGISTRATION_FAILED
+                    })
+                }
+            }).catch(err => {
+                dispatch({
+                    type: REGISTRATION_FAILED
+                })
+            })
+    }
+}
+
+export function logIn(email, password) {
+    return function (dispatch) {
+        dispatch({
+            type: POST_LOGIN
+        })
+        return fetch(`${baseUrl}auth/login`, {
+            method: 'POST',
+            body: JSON.stringify({
+                email: email,
+                password: password,
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(async res => {
+                if (res && res.ok) {
+                    dispatch({
+                        type: LOGIN_SUCCESS,
+                        feed: await res.json()
+                    })
+                } else {
+                    dispatch({
+                        type: LOGIN_FAILED
+                    })
+                }
+            }).catch(err => {
+                dispatch({
+                    type: LOGIN_FAILED
+                })
+            })
+    }
+};
+
+export function getNewAccessToken(refreshToken) {
+        return fetch(`${baseUrl}auth/token`, {
+            method: 'POST',
+            body: JSON.stringify({
+                token: refreshToken,
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(async res => {
+                if (res && res.ok) {
+                    const result = await res.json().then(res => res);
+                    document.cookie = `accessToken=${await result.accessToken}`;
+                    document.cookie = `token=${await result.refreshToken}`;
+                    const newAccessToken = await getCookie('accessToken');
+                } else {
+                    throw res;
+                }
+            }).catch(err => {
+                    console.log(err)
+            })
+}
+
+export function logOut(refreshToken) {
+    return function (dispatch) {
+        dispatch({
+            type: POST_LOGOUT
+        })
+        return fetch(`${baseUrl}auth/logout`, {
+            method: 'POST',
+            body: JSON.stringify({
+                token: refreshToken,
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(async res => {
+                if (res && res.ok) {
+                    dispatch({
+                        type: LOGOUT_SUCCESS,
+                        feed: await res.json()
+                    })
+                } else {
+                    dispatch({
+                        type: LOGOUT_FAILED
+                    })
+                }
+            }).catch(err => {
+                dispatch({
+                    type: LOGOUT_FAILED
+                })
+            })
+    }
+}
+
+export function userInfo(accessToken) {
+    return function (dispatch) {
+        dispatch({
+            type: GET_USER
+        })
+        return fetch(`${baseUrl}auth/user`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: accessToken
+            }
+        })
+            .then(async res => {
+                if (res && res.ok) {
+                    return dispatch({
+                        type: USER_SUCCESS,
+                        feed: await res.json()
+                    })
+                }
+                if (await res.status === 403) {
+                    const refreshToken = await getCookie('token');
+                    const newAccessToken = await getNewAccessToken(refreshToken);
+                    await userInfo(newAccessToken);//не понимаю, почему не работает повторно, что мешает?
+                    return dispatch({
+                        type: USER_SUCCESS,
+                        feed: await res.json()
+                    })
+                } else {
+                    throw res
+                }
+            })
+            .catch(err => {
+                console.log(err)
+                return dispatch({
+                    type: USER_FAILED
+                })
+            })
+    }
+}
+
+export function userInfoRepeat(accessToken) {
+    return function (dispatch) {
+        dispatch({
+            type: GET_USER
+        })
+        return fetch(`${baseUrl}auth/user`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: accessToken
+            }
+        })
+            .then(async res => {
+                if (res && res.ok) {
+                    return dispatch({
+                        type: USER_SUCCESS,
+                        feed: await res.json()
+                    })
+                } else {
+                    return dispatch({
+                        type: USER_FAILED
+                    })
+                }
+            })
+            .catch(err => {
+                console.log(err)
+                return dispatch({
+                    type: USER_FAILED
+                })
+            })
+    }
+}
+
+
+export function editUserInfo(accessToken, editedForm) {//объект
+    return function (dispatch) {
+        dispatch({
+            type: EDIT_USER
+        })
+        return fetch(`${baseUrl}auth/user`, {
+            method: 'PATCH',
+            body: JSON.stringify(editedForm),
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: accessToken
+            }
+        })
+            .then(async res => {
+                if (res && res.ok) {
+                    return dispatch({
+                        type: USER_SUCCESS,
+                        feed: await res.json()
+                    })
+                }
+                if (await res.status === 403) {
+                    const refreshToken = await getCookie('token')
+                    const newAccessToken = await getNewAccessToken(refreshToken);
+                    userInfoRepeat(newAccessToken);//внутри себя не запускается, не знаю почему, пришлось дублировать
+                } else {
+                    throw res
+                }
+            }).catch(err => {
+                console.log(err)
+                return dispatch({
+                    type: USER_FAILED
+                })
+            })
+    }
+}
+
+
 
 

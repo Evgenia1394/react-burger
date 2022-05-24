@@ -7,6 +7,7 @@ import Modal from "../modal/modal";
 import {useDrag} from "react-dnd";
 import {useDispatch, useSelector} from "react-redux";
 import {OPEN_INGREDIENT} from "../../services/actions/ingredient-actions";
+import {Route, useRouteMatch, Link, useParams} from "react-router-dom";
 
 const IngredientCard = (props) => {
     const [visible, setVisible] = useState(false);
@@ -41,23 +42,25 @@ const IngredientCard = (props) => {
     }
 
     const modal =
-        <Modal
-            setVisible={setVisible}
-            isIngredientDetail={true}
-        >
-            <IngredientDetails
-                src={image}
-                name={name}
-                calories={calories}
-                proteins={proteins}
-                fat={fat}
-                carbohydrates={carbohydrates}
-            />
-        </Modal>
+            <Modal
+                setVisible={setVisible}
+                isIngredientDetail={true}
+            >
+                <IngredientDetails
+                    src={image}
+                    name={name}
+                    calories={calories}
+                    proteins={proteins}
+                    fat={fat}
+                    carbohydrates={carbohydrates}
+                />
+            </Modal>
 
     return (
-        <> {!isDrag &&
-            <div className={ingredientCardStyles.wrapper}
+        <>{!isDrag &&
+
+        <Link to={{pathname: `/ingredients/${_id}`, state: { fromMain: true }}} >
+        <div className={ingredientCardStyles.wrapper}
                  ref={dragRef}
                  draggable
                  onClick={handleOpenModal}
@@ -75,6 +78,7 @@ const IngredientCard = (props) => {
                 </div>
                 <p className="text text_type_main-default">{name}</p>
             </div>
+            </Link>
         }
         {visible && modal}
         </>

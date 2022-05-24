@@ -4,7 +4,7 @@ import burgerIngredientsStyles from './burger-ingredients.module.css';
 import IngredientCard from '../ingredient-card/ingredient-card';
 import {useSelector} from "react-redux";
 
-const BurgerIngredients = (props) => {
+const BurgerIngredients = () => {
     const [current, setCurrent] = useState('Булки');
     const {feedIngredientsRequest, feedIngredientsFailed, feedIngredients} =
         useSelector((state)  => state.allIngredientsReducer);

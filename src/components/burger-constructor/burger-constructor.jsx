@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     Button,
     ConstructorElement,
@@ -15,6 +15,11 @@ import {useDrag, useDrop} from "react-dnd";
 import {postOrder} from "../../services/actions/thunks";
 import {uuidv4} from "../../utils/uuidv4";
 import {ConstructorIngredient} from "../constructor-ingredient/constructor-ingredient";
+import getCookie from "../../utils/get-cookie";
+import {Redirect, useHistory} from "react-router-dom";
+import {OPEN_MODAL} from "../../services/actions/modal-actions";
+import PropTypes from "prop-types";
+import ModalOverlay from "../modal-overlay/modal-overlay";
 
 const BurgerConstructor = ({onDropHandler}) => {
 
@@ -22,14 +27,23 @@ const BurgerConstructor = ({onDropHandler}) => {
     const {constructorIngredient} = useSelector((state) => state.draggableConstructorReducer);
 
     const {postOrderRequest, postOrderFailed, postOrderFeed} = useSelector((state) => state.orderReducer);
+    const {isShowModal} = useSelector((state) => state.modalReducer);
 
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     const [currentIngredient, setCurrentIngredient] = useState(null);
 
     const notBun = constructorIngredient.filter(ingredient => (ingredient.type !== 'bun' && ingredient.count > 0))
     const bun = constructorIngredient.find(ingredient => (ingredient.type === 'bun'));
     const dispatch = useDispatch();
+    const history = useHistory();
+
+    useEffect(() => {
+        if (postOrderFeed) {
+            setLoading(false);
+        }
+    }, [postOrderFeed]);
+
 
     const [, dropTarget] = useDrop({
         accept: 'ingredients',
@@ -44,19 +58,23 @@ const BurgerConstructor = ({onDropHandler}) => {
     }
     const totalPrice = (bun ? bun.price : 0) * 2 + (notBun.length ? priceIngredients : 0);
 
-    const dataOrder = async () => {
-        await setLoading(true)
+    const dataOrder = () => {
+        setLoading(true)
         let arrId = [bun._id];
         for (let value of notBun) {
             arrId.push(value._id)
         }
-        await dispatch(postOrder(arrId));
+
+        if (getCookie('token') === undefined) {
+            return history.push("/login", { from: '/' })
+        }
+        return dispatch(postOrder(arrId));
     }
 
-    const handleOpenModal = async () => {
-        await dataOrder();
-        await setLoading(false);
-        await setVisible(true);
+    const handleOpenModal = () => {
+         dataOrder();
+         dispatch({type: OPEN_MODAL})
+         setVisible(true);
     }
 
     return (
@@ -121,15 +139,19 @@ const BurgerConstructor = ({onDropHandler}) => {
                 <Button type="primary" size="medium" onClick={handleOpenModal}>
                     Оформить заказ
                 </Button>
-                {visible &&
+                {visible && !loading && isShowModal &&
                 <Modal
                     setVisible={setVisible}>
-                    <OrderDetails orderNumber={postOrderFeed.order.number}/>
+                    <OrderDetails orderNumber={postOrderFeed?.order?.number}/>
                 </Modal>
                 }
             </div>
         </section>
     )
 };
+
+BurgerConstructor.propTypes = {
+    onDropHandler: PropTypes.func
+}
 
 export default BurgerConstructor;

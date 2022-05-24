@@ -8,6 +8,12 @@
     align-items: center;
     height: 56px;
     margin: 16px 20px;
+
+    font-family: 'Jet Brains Mono';
+    font-size: 16px;
+    line-height: 1.5;
+    font-weight: normal;
+    color: #8585AD;
 }
 .header {
     height: 88px;

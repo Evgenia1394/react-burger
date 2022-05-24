@@ -8,12 +8,18 @@ import ModalOverlay from "../modal-overlay/modal-overlay";
 import {useDispatch} from "react-redux";
 import {CLEAR_ORDER} from "../../services/actions/order-actions";
 import {CLEAR_INGREDIENT} from "../../services/actions/ingredient-actions";
+import {useHistory, useParams} from "react-router-dom";
+import {CLOSE_MODAL} from "../../services/actions/modal-actions";
 
 const modalRoot = document.getElementById("modal-root");
 
 const Modal = (props) => {
-    const {setVisible, children} = props;
+    const { children} = props;
     const dispatch = useDispatch();
+
+    const { id } = useParams();
+    const history = useHistory()
+
     useEffect(() => {
         const onEsc = (e) => {
             if (e.key === 'Escape') {
@@ -26,13 +32,16 @@ const Modal = (props) => {
     }, [])
 
     const handleCloseModal = () => {
-        setVisible(false);
         dispatch({
             type: CLEAR_ORDER
         })
         dispatch({
             type: CLEAR_INGREDIENT
         })
+        dispatch({
+            type: CLOSE_MODAL
+        })
+        history.replace('/')
     }
 
     return ReactDOM.createPortal(
@@ -57,6 +66,7 @@ Modal.propTypes = {
     closeEsc: PropTypes.func,
     handleCloseModal: PropTypes.func,
     handleOverlayModal: PropTypes.func,
+    isIngredientDetail: PropTypes.bool
 }
 
 export default Modal;
