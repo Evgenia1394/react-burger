@@ -4,7 +4,8 @@ export const defaultUserInfoState = {
     userInfoReducer: {
         feedUserInfoRequest: false,
         feedUserInfoFailed: false,
-        feedUserInfo: {success: false, user: {}}
+        feedUserInfo: {success: false, user: {}},
+        isAuthChecked: false,
     }
 };
 
@@ -21,21 +22,24 @@ export const userInfoReducer = (state = defaultUserInfoState, action) => {
             return {
                 ...state,
                 feedUserInfo: action.feed,
-                feedUserInfoRequest: false
+                feedUserInfoRequest: false,
+                isAuthChecked: true
             };
         }
         case USER_FAILED: {
             return {
                 ...state,
                 feedUserInfoFailed: true,
-                feedUserInfoRequest: false
+                feedUserInfoRequest: false,
+                isAuthChecked: true
             };
         }
         case EDIT_USER: {
             return {
                 ...state,
                 feedUserInfo: action.feed,
-                feedUserInfoRequest: false
+                feedUserInfoRequest: false,
+                isAuthChecked: true//нужно или нет?
             };
         }
         case CLEAR_USER: {
@@ -43,7 +47,7 @@ export const userInfoReducer = (state = defaultUserInfoState, action) => {
                 ...state,
                 feedUserInfoRequest: false,
                 feedUserInfoFailed: false,
-                feedUserInfo: {success: false, user: {}}
+                feedUserInfo: {success: false, user: {}},
             };
         }
         default: {

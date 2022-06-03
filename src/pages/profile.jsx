@@ -1,11 +1,12 @@
-import {useEffect, useRef, useState} from "react";
+import {useRef, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import authStyles from "./auth.module.css";
 import {Button, Input} from "@ya.praktikum/react-developer-burger-ui-components";
 import {NavLink, useHistory} from "react-router-dom";
-import {editUserInfo, logOut, userInfo} from "../services/actions/thunks";
+import {editUserInfo, logOut} from "../services/actions/thunks";
 import getCookie from "../utils/get-cookie";
 import {CLEAR_USER} from "../services/actions/user-info-actions";
+import {NOT_LOGGED} from "../services/actions/isLogged-actions";
 
 export const Profile = () => {
     let {feedUserInfoRequest, feedUserInfoFailed, feedUserInfo} = useSelector(state => state.userInfoReducer);
@@ -37,11 +38,15 @@ export const Profile = () => {
 
     const signOut = async () => {
         await dispatch(logOut(getCookie('token')));
+        if (!getCookie('token')) {
+            await dispatch({type: NOT_LOGGED})
+        }
         await dispatch({type: CLEAR_USER});
         await history.replace({pathname: '/login'})
     }
 
-    const editUser = () => {
+    const editUser = (e) => {
+        e.preventDefault();
         const changedFields = {}
         for (let field in form) {
             if (form[field]) {
@@ -111,7 +116,7 @@ export const Profile = () => {
                     </p>
                 </div>
 
-                <div className={authStyles.formProfile}>
+                <form className={authStyles.formProfile} onSubmit={editUser}>
                     <Input
                         type={'text'}
                         placeholder={'Имя'}
@@ -153,14 +158,14 @@ export const Profile = () => {
                         type={'password'}
                     />
                     <div className={authStyles.buttons}>
-                        <Button type="secondary" size="medium" onClick={resetForm}>
+                        <Button type="primary" size="medium" onClick={resetForm}>
                             Отмена
                         </Button>
-                        <Button type="primary" size="large" onClick={editUser}>
+                        <Button type="submit" size="large">
                             Сохранить
                         </Button>
                     </div>
-                </div>
+                </form>
             </div>
         </>
     )

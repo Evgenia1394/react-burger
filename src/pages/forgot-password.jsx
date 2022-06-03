@@ -1,7 +1,7 @@
-import {useRef, useState} from "react";
-import {Button, EmailInput, Input, PasswordInput} from "@ya.praktikum/react-developer-burger-ui-components";
+import {useState} from "react";
+import {Button, EmailInput} from "@ya.praktikum/react-developer-burger-ui-components";
 import authStyles from "./auth.module.css";
-import {Link, Redirect, useHistory, useLocation} from "react-router-dom";
+import {Link, Redirect, useHistory} from "react-router-dom";
 import {useDispatch} from "react-redux";
 import {postEmail} from "../services/actions/thunks";
 import getCookie from "../utils/get-cookie";
@@ -16,7 +16,8 @@ export const ForgotPassword = () => {
 
     const dispatch = useDispatch()
 
-    const recovery = () => {
+    const recovery = (e) => {
+        e.preventDefault();
          dispatch(postEmail(value));
         return history.push("/reset-password", { from: '/forgot-password' })
     }
@@ -28,21 +29,21 @@ export const ForgotPassword = () => {
     return (
         <>
             <div className={authStyles.main}>
-                <div className={authStyles.form}>
+                <form className={authStyles.form} onSubmit={recovery}>
                     <p className="text text_type_main-medium">
                         Восстановление пароля
                     </p>
                     <div className={authStyles.input}>
                         <EmailInput onChange={onChange} value={value} name={'email'}/>
                     </div>
-                    <Button type="primary" size="medium" onClick={recovery}>
+                    <Button type="submit" size="medium">
                         Восстановить
                     </Button>
                     <div className={authStyles.registration}></div>
                     <p className="text text_type_main-default text_color_inactive">
                         Вспомнили пароль? <Link to='/login'>Войти</Link>
                     </p>
-                </div>
+                </form>
             </div>
         </>
     )

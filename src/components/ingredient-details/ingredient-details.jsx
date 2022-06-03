@@ -1,7 +1,6 @@
 import ingredientDetailsStyles from './ingredient-details.module.css'
 import React from "react";
-import PropTypes, {bool} from "prop-types";
-import {useParams} from "react-router-dom";
+import PropTypes from "prop-types";
 
 const IngredientDetails = (props) => {
     const {src, name, calories, proteins, fat, carbohydrates, single} = props;

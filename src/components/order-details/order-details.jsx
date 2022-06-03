@@ -1,4 +1,3 @@
-import {CheckMarkIcon} from "@ya.praktikum/react-developer-burger-ui-components";
 import React from "react";
 import orderDetailsStyles from './order-details.module.css'
 import {number} from "prop-types";

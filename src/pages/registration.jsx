@@ -2,10 +2,9 @@ import {useRef, useState} from "react";
 import {Button, EmailInput, Input, PasswordInput} from "@ya.praktikum/react-developer-burger-ui-components";
 import './styles.css';
 import authStyles from "./auth.module.css";
-import {Link, Redirect, useHistory} from "react-router-dom";
+import {Link, useHistory} from "react-router-dom";
 import {useDispatch} from "react-redux";
-import {registration, registrationNew} from "../services/actions/thunks";
-import {baseUrl} from "../utils/burger-api";
+import {registrationNew} from "../services/actions/thunks";
 import getCookie from "../utils/get-cookie";
 
 export const Registration = () => {
@@ -33,26 +32,26 @@ export const Registration = () => {
         alert('Icon Click Callback')
     }
 
-    const registration = async () => {
+    const registration = async (e) => {
+      e.preventDefault();
       await dispatch(registrationNew(form.email, form.password, form.name));
       await history.replace({pathname: '/'})
     }
 
     if (getCookie('token') !== undefined) {
-        return (<Redirect to='/'/>)
+        history.goBack()
     }
 
     return (
         <>
             <div className={authStyles.main}>
-                <div className={authStyles.form}>
+                <form className={authStyles.form} onSubmit={registration}>
                     <p className="text text_type_main-medium">
                         Регистрация
                     </p>
                     <Input
                         type={'text'}
                         placeholder={'Имя'}
-                        // onChange={e => setValue(e.target.value)}
                         onChange={onChange}
                         icon={'CurrencyIcon'}
                         value={form.name}
@@ -67,14 +66,14 @@ export const Registration = () => {
                         <EmailInput onChange={onChange} value={form.email} name={'email'}/>
                     </div>
                     <PasswordInput onChange={onChange} value={form.password} name={'password'} />
-                    <Button type="primary" size="medium" onClick={registration}>
+                    <Button type="submit" size="medium">
                         Зарегистрироваться
                     </Button>
                     <div className={authStyles.registration}></div>
                     <p className="text text_type_main-default text_color_inactive">
                         Уже зарегистрированы? <Link to='/login'>Войти</Link>
                     </p>
-                </div>
+                </form>
             </div>
         </>
     )

@@ -1,5 +1,5 @@
 import './styles.css';
-import {Link, Redirect, useHistory, useLocation} from 'react-router-dom';
+import {Link, useHistory, useLocation} from 'react-router-dom';
 import {useRef, useState} from "react";
 import {Button, Input, PasswordInput} from "@ya.praktikum/react-developer-burger-ui-components";
 import authStyles from "./auth.module.css";
@@ -33,12 +33,13 @@ export const ResetPassword = () => {
         alert('Icon Click Callback')
     }
 
-    const resetRequest = () => {
+    const resetRequest = (e) => {
+        e.preventDefault();
         dispatch(resetPassword(form.password, form.code));
     }
 
     if (getCookie('token') !== undefined) {
-        return (<Redirect to="/" />);
+        history.goBack();
     }
 
     if (stateLocation?.from !== '/forgot-password') {
@@ -48,7 +49,7 @@ export const ResetPassword = () => {
     return (
         <>
             <div className={authStyles.main}>
-                <div className={authStyles.form}>
+                <form className={authStyles.form} onSubmit={resetRequest}>
                     <p className="text text_type_main-medium">
                         Восстановление пароля
                     </p>
@@ -66,13 +67,13 @@ export const ResetPassword = () => {
                         errorText={'Ошибка'}
                         size={'default'}
                     />
-                    <Button type="primary" size="medium" onClick={resetRequest}>
+                    <Button type="submit" size="medium">
                         Сохранить
                     </Button>
                     <p className="text text_type_main-default text_color_inactive">
                         Вспомнили пароль? <Link to='/login'>Войти</Link>
                     </p>
-                </div>
+                </form>
             </div>
         </>
     )

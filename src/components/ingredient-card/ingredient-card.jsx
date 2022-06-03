@@ -1,21 +1,15 @@
-import React, {useState} from 'react';
+import React from 'react';
 import ingredientCardStyles from './ingredient-card.module.css';
 import {Counter, CurrencyIcon} from "@ya.praktikum/react-developer-burger-ui-components";
 import {burgerItem} from '../burgerItem';
-import IngredientDetails from "../ingredient-details/ingredient-details";
-import Modal from "../modal/modal";
 import {useDrag} from "react-dnd";
-import {useDispatch, useSelector} from "react-redux";
-import {OPEN_INGREDIENT} from "../../services/actions/ingredient-actions";
-import {Route, useRouteMatch, Link, useParams} from "react-router-dom";
+import {useSelector} from "react-redux";
+import {Link} from "react-router-dom";
 
 const IngredientCard = (props) => {
-    const [visible, setVisible] = useState(false);
     const {data} = props;
     const {image, name, calories, proteins, fat, carbohydrates, price, _id, type} = props.data;
     const {constructorIngredient} = useSelector((state) => state.draggableConstructorReducer);
-
-    const dispatch = useDispatch();
 
     const count = constructorIngredient.filter(ingredient => (ingredient._id === _id))
             .filter(ingredient => ingredient.type !== 'bun')[0] ?
@@ -33,37 +27,13 @@ const IngredientCard = (props) => {
         }),
     })
 
-    const handleOpenModal = () => {
-        dispatch({
-            type: OPEN_INGREDIENT,
-            payload: data
-        })
-        setVisible(true);
-    }
-
-    const modal =
-            <Modal
-                setVisible={setVisible}
-                isIngredientDetail={true}
-            >
-                <IngredientDetails
-                    src={image}
-                    name={name}
-                    calories={calories}
-                    proteins={proteins}
-                    fat={fat}
-                    carbohydrates={carbohydrates}
-                />
-            </Modal>
-
     return (
         <>{!isDrag &&
 
-        <Link to={{pathname: `/ingredients/${_id}`, state: { fromMain: true }}} >
+        <Link to={{pathname: `/ingredients/${_id}`, state: { background: "location" }}} >
         <div className={ingredientCardStyles.wrapper}
                  ref={dragRef}
                  draggable
-                 onClick={handleOpenModal}
             >
                 <img src={image} alt={name}/>
                 <div className={ingredientCardStyles.price}>
@@ -80,7 +50,6 @@ const IngredientCard = (props) => {
             </div>
             </Link>
         }
-        {visible && modal}
         </>
         )
 }

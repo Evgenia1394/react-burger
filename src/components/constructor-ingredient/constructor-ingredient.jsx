@@ -8,8 +8,6 @@ import {burgerItem} from "../burgerItem";
 
 export const ConstructorIngredient = (props) => {
 
-    const [dropItem, setDropItem] = useState(null);
-    const {constructorIngredient} = useSelector((state) => state.draggableConstructorReducer);
     const ref = useRef(null);
     const item = props.ingredient;
     const dispatch = useDispatch();

@@ -20,8 +20,22 @@ import {
     USER_SUCCESS
 } from "./user-info-actions";
 import getCookie from "../../utils/get-cookie";
-import {useDispatch} from "react-redux";
-import {useHistory} from "react-router-dom";
+import {CheckResponse, checkResponse} from "../../utils/check-response";
+
+const AddFailedAction = (dispatch, text) => {
+    const action = {
+        type: text,
+    }
+    dispatch(action)
+}
+
+const AddSuccessAction = (dispatch, text, res) => {
+    const action = {
+        type: text,
+        feed: res
+    }
+    dispatch(action)
+}
 
 export function addIngredient(item, array) {
     return async function (dispatch) {
@@ -42,6 +56,10 @@ export function addIngredient(item, array) {
                     type: ADD_INGREDIENT,
                     payload: item
                 })
+                await dispatch({
+                    type: INCREASE_COUNT,
+                    id: item._id
+                })
             } else {
                 const idPreviousBun = await previousBun._id;
                 await dispatch({
@@ -50,6 +68,10 @@ export function addIngredient(item, array) {
                 await dispatch({
                     type: ADD_INGREDIENT,
                     payload: item
+                })
+                await dispatch({
+                    type: INCREASE_COUNT,
+                    id: item._id
                 })
             }
         }
@@ -62,22 +84,11 @@ export function getFeed() {
             type: GET_ALLINGREDIENTS_REQUEST
         })
         return getIngredientsApi
-            .then(async res => {
-                if (res && res.ok) {
-                    dispatch({
-                        type: GET_FEED_SUCCESS,
-                        feed: await res.json()
-                    })
-                } else {
-                    dispatch({
-                        type: GET_FEED_FAILED
-                    })
-                }
-            }).catch(err => {
-                dispatch({
-                    type: GET_FEED_FAILED
-                })
-            })
+            .then(CheckResponse)
+            .then(res => !!res ?
+                  AddSuccessAction(dispatch, GET_FEED_SUCCESS, res)
+                : AddFailedAction(dispatch, GET_FEED_FAILED)
+            )
     }
 }
 
@@ -93,22 +104,11 @@ export function postOrder(arrId) {
                 'Content-Type': 'application/json'
             }
         })
-            .then(async res => {
-                if (res && res.ok) {
-                    dispatch({
-                        type: GET_ORDER_SUCCESS,
-                        feed: await res.json()
-                    })
-                } else {
-                    dispatch({
-                        type: GET_ORDER_FAILED
-                    })
-                }
-            }).catch(err => {
-            dispatch({
-                type: GET_ORDER_FAILED
-            })
-        })
+            .then(CheckResponse)
+            .then(res => !!res ?
+                AddSuccessAction(dispatch, GET_ORDER_SUCCESS, res)
+                : AddFailedAction(dispatch, GET_ORDER_FAILED)
+            )
     }
 }
 
@@ -124,22 +124,11 @@ export function postEmail(email) {//послать имейл для восст�
                 'Content-Type': 'application/json'
             }
         })
-            .then(async res => {
-                if (res && res.ok) {
-                    dispatch({
-                        type: GET_EMAIL_SUCCESS,
-                        feed: await res.json()
-                    })
-                } else {
-                    dispatch({
-                        type: GET_EMAIL_FAILED
-                    })
-                }
-            }).catch(err => {
-                dispatch({
-                    type: GET_EMAIL_FAILED
-                })
-            })
+            .then(CheckResponse)
+            .then(res => !!res ?
+                AddSuccessAction(dispatch, GET_EMAIL_SUCCESS, res)
+                : AddFailedAction(dispatch, GET_EMAIL_FAILED)
+            )
     }
 }
 
@@ -158,22 +147,11 @@ export function resetPassword(password, token) {//токен из почты+н�
                 'Content-Type': 'application/json'
             }
         })
-            .then(async res => {
-                if (res && res.ok) {
-                    dispatch({
-                        type: RESET_PASSWORD_SUCCESS,
-                        feed: await res.json()
-                    })
-                } else {
-                    dispatch({
-                        type: RESET_PASSWORD_FAILED
-                    })
-                }
-            }).catch(err => {
-                dispatch({
-                    type: RESET_PASSWORD_FAILED
-                })
-            })
+            .then(CheckResponse)
+            .then(res => !!res ?
+                AddSuccessAction(dispatch, RESET_PASSWORD_SUCCESS, res)
+                : AddFailedAction(dispatch, RESET_PASSWORD_FAILED)
+            )
     }
 }
 
@@ -193,22 +171,11 @@ export function registrationNew(email, password, name) {
                 'Content-Type': 'application/json'
             }
         })
-            .then(async res => {
-                if (res && res.ok) {
-                    dispatch({
-                        type: REGISTRATION_SUCCESS,
-                        feed: await res.json()
-                    })
-                } else {
-                    dispatch({
-                        type: REGISTRATION_FAILED
-                    })
-                }
-            }).catch(err => {
-                dispatch({
-                    type: REGISTRATION_FAILED
-                })
-            })
+            .then(CheckResponse)
+            .then(res => !!res ?
+                AddSuccessAction(dispatch, REGISTRATION_SUCCESS, res)
+                : AddFailedAction(dispatch, REGISTRATION_FAILED)
+            )
     }
 }
 
@@ -227,22 +194,11 @@ export function logIn(email, password) {
                 'Content-Type': 'application/json'
             }
         })
-            .then(async res => {
-                if (res && res.ok) {
-                    dispatch({
-                        type: LOGIN_SUCCESS,
-                        feed: await res.json()
-                    })
-                } else {
-                    dispatch({
-                        type: LOGIN_FAILED
-                    })
-                }
-            }).catch(err => {
-                dispatch({
-                    type: LOGIN_FAILED
-                })
-            })
+            .then(CheckResponse)
+            .then(res => !!res ?
+                AddSuccessAction(dispatch, LOGIN_SUCCESS, res)
+                : AddFailedAction(dispatch, LOGIN_FAILED)
+            )
     }
 };
 
@@ -284,22 +240,15 @@ export function logOut(refreshToken) {
                 'Content-Type': 'application/json'
             }
         })
-            .then(async res => {
-                if (res && res.ok) {
-                    dispatch({
-                        type: LOGOUT_SUCCESS,
-                        feed: await res.json()
-                    })
-                } else {
-                    dispatch({
-                        type: LOGOUT_FAILED
-                    })
-                }
-            }).catch(err => {
+            .then(CheckResponse)
+            .then(res => !!res ?
                 dispatch({
-                    type: LOGOUT_FAILED
+                    type: LOGOUT_SUCCESS,
+                    feed: res
+                }) : dispatch({
+                    type: LOGOUT_FAILED,
                 })
-            })
+            )
     }
 }
 
@@ -343,40 +292,6 @@ export function userInfo(accessToken) {
     }
 }
 
-export function userInfoRepeat(accessToken) {
-    return function (dispatch) {
-        dispatch({
-            type: GET_USER
-        })
-        return fetch(`${baseUrl}auth/user`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: accessToken
-            }
-        })
-            .then(async res => {
-                if (res && res.ok) {
-                    return dispatch({
-                        type: USER_SUCCESS,
-                        feed: await res.json()
-                    })
-                } else {
-                    return dispatch({
-                        type: USER_FAILED
-                    })
-                }
-            })
-            .catch(err => {
-                console.log(err)
-                return dispatch({
-                    type: USER_FAILED
-                })
-            })
-    }
-}
-
-
 export function editUserInfo(accessToken, editedForm) {//объект
     return function (dispatch) {
         dispatch({
@@ -400,7 +315,7 @@ export function editUserInfo(accessToken, editedForm) {//объект
                 if (await res.status === 403) {
                     const refreshToken = await getCookie('token')
                     const newAccessToken = await getNewAccessToken(refreshToken);
-                    userInfoRepeat(newAccessToken);//внутри себя не запускается, не знаю почему, пришлось дублировать
+                    editUserInfo(newAccessToken, editedForm);//внутри себя не запускается, не знаю почему, пришлось дублировать
                 } else {
                     throw res
                 }

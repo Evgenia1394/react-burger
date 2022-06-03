@@ -34,9 +34,9 @@ const AppHeader = () => {
 
                     </div>
 
-                    <div className={headerStyles.logo}>
+                    <NavLink to={''} className={headerStyles.logo}>
                         <Logo/>
-                    </div>
+                    </NavLink>
 
                     <NavLink to={'profile'}
                              activeStyle={{color: '#F2F2F3'}}

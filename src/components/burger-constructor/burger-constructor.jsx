@@ -2,24 +2,23 @@ import React, {useEffect, useState} from 'react';
 import {
     Button,
     ConstructorElement,
-    Counter,
-    CurrencyIcon,
-    DragIcon
+    CurrencyIcon
 } from "@ya.praktikum/react-developer-burger-ui-components";
 import burgerStyles from './burger-constructor.module.css';
 import OrderDetails from "../order-details/order-details";
 import Modal from "../modal/modal";
 import {useDispatch, useSelector} from "react-redux";
-import {useDrag, useDrop} from "react-dnd";
+import {useDrop} from "react-dnd";
 
 import {postOrder} from "../../services/actions/thunks";
 import {uuidv4} from "../../utils/uuidv4";
 import {ConstructorIngredient} from "../constructor-ingredient/constructor-ingredient";
 import getCookie from "../../utils/get-cookie";
-import {Redirect, useHistory} from "react-router-dom";
-import {OPEN_MODAL} from "../../services/actions/modal-actions";
+import {useHistory} from "react-router-dom";
+import {CLOSE_MODAL, OPEN_MODAL} from "../../services/actions/modal-actions";
 import PropTypes from "prop-types";
-import ModalOverlay from "../modal-overlay/modal-overlay";
+import {CLEAR_ORDER} from "../../services/actions/order-actions";
+import {CLEAR_INGREDIENT} from "../../services/actions/ingredient-actions";
 
 const BurgerConstructor = ({onDropHandler}) => {
 
@@ -30,8 +29,6 @@ const BurgerConstructor = ({onDropHandler}) => {
     const {isShowModal} = useSelector((state) => state.modalReducer);
 
     const [loading, setLoading] = useState(true);
-
-    const [currentIngredient, setCurrentIngredient] = useState(null);
 
     const notBun = constructorIngredient.filter(ingredient => (ingredient.type !== 'bun' && ingredient.count > 0))
     const bun = constructorIngredient.find(ingredient => (ingredient.type === 'bun'));
@@ -75,6 +72,19 @@ const BurgerConstructor = ({onDropHandler}) => {
          dataOrder();
          dispatch({type: OPEN_MODAL})
          setVisible(true);
+    }
+
+    const handleCloseModal = () => {
+        dispatch({
+            type: CLEAR_ORDER
+        })
+        dispatch({
+            type: CLEAR_INGREDIENT
+        })
+        dispatch({
+            type: CLOSE_MODAL
+        })
+        history.replace('/')
     }
 
     return (
@@ -141,6 +151,7 @@ const BurgerConstructor = ({onDropHandler}) => {
                 </Button>
                 {visible && !loading && isShowModal &&
                 <Modal
+                    handleCloseModal={handleCloseModal}
                     setVisible={setVisible}>
                     <OrderDetails orderNumber={postOrderFeed?.order?.number}/>
                 </Modal>

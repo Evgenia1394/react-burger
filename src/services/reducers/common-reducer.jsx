@@ -10,6 +10,7 @@ import {loginReducer} from "./login-reducer";
 import {logoutReducer} from "./logout-reducer";
 import {userInfoReducer} from "./user-info-reducer";
 import {modalReducer} from "./modal-reducer";
+import {isLoggedReducer} from "./isLogged-reducer";
 
 export const commonReducer = combineReducers({
     allIngredientsReducer,
@@ -22,5 +23,6 @@ export const commonReducer = combineReducers({
     loginReducer,
     logoutReducer,
     userInfoReducer,
-    modalReducer
+    modalReducer,
+    isLoggedReducer
     })

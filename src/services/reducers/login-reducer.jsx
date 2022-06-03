@@ -23,14 +23,14 @@ export const loginReducer = (state = defaultLoginState, action) => {
             return {
                 ...state,
                 feedLogin: action.feed,
-                feedLoginRequest: false
+                feedLoginRequest: false,
             };
         }
         case LOGIN_FAILED: {
             return {
                 ...state,
                 feedLoginFailed: true,
-                feedLoginRequest: false
+                feedLoginRequest: false,
             };
         }
         default: {
