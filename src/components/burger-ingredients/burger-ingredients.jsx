@@ -23,6 +23,7 @@ const BurgerIngredients = () => {
     const menuRef = useRef();
 
     const scrollHandler = () => {
+        if(!menuRef.current) return;
         const menuHeight = menuRef.current.getBoundingClientRect().top;
         const sauceHeight = Math.abs(tabSauceRef.current.getBoundingClientRect().top - menuHeight);
         const bunHeight = Math.abs(tabBunRef.current.getBoundingClientRect().top - menuHeight);
@@ -51,7 +52,7 @@ const BurgerIngredients = () => {
             })
             dispatch({
                 type: OPEN_MODAL,
-            })
+            });
         }
     return (
         <div>

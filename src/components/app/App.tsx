@@ -23,6 +23,7 @@ import {CLEAR_INGREDIENT} from "../../services/actions/ingredient-actions";
 import {CLOSE_MODAL} from "../../services/actions/modal-actions";
 import IngredientDetails from "../ingredient-details/ingredient-details";
 import Modal from "../modal/modal";
+import {HistoryOrders} from "../../pages/history-orders";
 
 function App() {
     const [isLoading, setIsLoading] = useState(true);
@@ -179,6 +180,11 @@ function App() {
                             <ProtectedAuthRoute path="/profile" exact={true}>
                                 <Profile/>
                             </ProtectedAuthRoute>
+
+                            <ProtectedAuthRoute path="/profile/orders" exact={true}>
+                                <HistoryOrders />
+                            </ProtectedAuthRoute>
+
                             {!isShowModal &&
                                 <Route path="/ingredients/:id" exact={true}>
                                     {renderNoModalIngredient}
@@ -191,7 +197,7 @@ function App() {
             }
         </>
     );
-}
+};
 
 export default App;
 

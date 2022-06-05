@@ -94,7 +94,7 @@ export const Profile = () => {
                         </NavLink>
                     </div>
                     <div className={authStyles.action}>
-                        <NavLink to={'/profile/orders'}
+                        <NavLink to={'profile/orders'}
                                  activeStyle={{color: '#F2F2F3'}}
                                  className={authStyles.inactiveAction}>
                             <p className="text text_type_main-medium">
