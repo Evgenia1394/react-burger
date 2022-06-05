@@ -1,20 +1,24 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     Button,
     ConstructorElement,
-    Counter,
-    CurrencyIcon,
-    DragIcon
+    CurrencyIcon
 } from "@ya.praktikum/react-developer-burger-ui-components";
 import burgerStyles from './burger-constructor.module.css';
 import OrderDetails from "../order-details/order-details";
 import Modal from "../modal/modal";
 import {useDispatch, useSelector} from "react-redux";
-import {useDrag, useDrop} from "react-dnd";
+import {useDrop} from "react-dnd";
 
 import {postOrder} from "../../services/actions/thunks";
 import {uuidv4} from "../../utils/uuidv4";
 import {ConstructorIngredient} from "../constructor-ingredient/constructor-ingredient";
+import getCookie from "../../utils/get-cookie";
+import {useHistory} from "react-router-dom";
+import {CLOSE_MODAL, OPEN_MODAL} from "../../services/actions/modal-actions";
+import PropTypes from "prop-types";
+import {CLEAR_ORDER} from "../../services/actions/order-actions";
+import {CLEAR_INGREDIENT} from "../../services/actions/ingredient-actions";
 
 const BurgerConstructor = ({onDropHandler}) => {
 
@@ -22,14 +26,21 @@ const BurgerConstructor = ({onDropHandler}) => {
     const {constructorIngredient} = useSelector((state) => state.draggableConstructorReducer);
 
     const {postOrderRequest, postOrderFailed, postOrderFeed} = useSelector((state) => state.orderReducer);
+    const {isShowModal} = useSelector((state) => state.modalReducer);
 
-    const [loading, setLoading] = useState(false);
-
-    const [currentIngredient, setCurrentIngredient] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     const notBun = constructorIngredient.filter(ingredient => (ingredient.type !== 'bun' && ingredient.count > 0))
     const bun = constructorIngredient.find(ingredient => (ingredient.type === 'bun'));
     const dispatch = useDispatch();
+    const history = useHistory();
+
+    useEffect(() => {
+        if (postOrderFeed) {
+            setLoading(false);
+        }
+    }, [postOrderFeed]);
+
 
     const [, dropTarget] = useDrop({
         accept: 'ingredients',
@@ -44,19 +55,36 @@ const BurgerConstructor = ({onDropHandler}) => {
     }
     const totalPrice = (bun ? bun.price : 0) * 2 + (notBun.length ? priceIngredients : 0);
 
-    const dataOrder = async () => {
-        await setLoading(true)
+    const dataOrder = () => {
+        setLoading(true)
         let arrId = [bun._id];
         for (let value of notBun) {
             arrId.push(value._id)
         }
-        await dispatch(postOrder(arrId));
+
+        if (getCookie('token') === undefined) {
+            return history.push("/login", { from: '/' })
+        }
+        return dispatch(postOrder(arrId));
     }
 
-    const handleOpenModal = async () => {
-        await dataOrder();
-        await setLoading(false);
-        await setVisible(true);
+    const handleOpenModal = () => {
+         dataOrder();
+         dispatch({type: OPEN_MODAL})
+         setVisible(true);
+    }
+
+    const handleCloseModal = () => {
+        dispatch({
+            type: CLEAR_ORDER
+        })
+        dispatch({
+            type: CLEAR_INGREDIENT
+        })
+        dispatch({
+            type: CLOSE_MODAL
+        })
+        history.replace('/')
     }
 
     return (
@@ -121,15 +149,20 @@ const BurgerConstructor = ({onDropHandler}) => {
                 <Button type="primary" size="medium" onClick={handleOpenModal}>
                     Оформить заказ
                 </Button>
-                {visible &&
+                {visible && !loading && isShowModal &&
                 <Modal
+                    handleCloseModal={handleCloseModal}
                     setVisible={setVisible}>
-                    <OrderDetails orderNumber={postOrderFeed.order.number}/>
+                    <OrderDetails orderNumber={postOrderFeed?.order?.number}/>
                 </Modal>
                 }
             </div>
         </section>
     )
 };
+
+BurgerConstructor.propTypes = {
+    onDropHandler: PropTypes.func
+}
 
 export default BurgerConstructor;

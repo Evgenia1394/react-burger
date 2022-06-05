@@ -8,26 +8,44 @@ import ErrorPage from '../error-page/error-page';
 import LoadingPage from "../loading-page/loading-page";
 import {addIngredient, getFeed} from "../../services/actions/thunks";
 import {useDispatch, useSelector} from "react-redux";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
+import {DndProvider} from "react-dnd";
+import {HTML5Backend} from "react-dnd-html5-backend";
 import {defaultAllIngredientsState} from "../../services/reducers/all-ingredients-reducer";
-
-export async function checkResponse(res: Response) {
-    if (!res.ok) {
-        throw new Error(`status: ${res.status}`);
-    }
-    return await res.json();
-}
+import { Route, Switch, useHistory, useLocation} from 'react-router-dom';
+import {Login} from "../../pages/login";
+import {ForgotPassword} from "../../pages/forgot-password";
+import {Registration} from "../../pages/registration";
+import {ResetPassword} from "../../pages/reset-password";
+import {Profile} from "../../pages/profile";
+import ProtectedAuthRoute from "../protected-auth-route";
+import {CLEAR_ORDER} from "../../services/actions/order-actions";
+import {CLEAR_INGREDIENT} from "../../services/actions/ingredient-actions";
+import {CLOSE_MODAL} from "../../services/actions/modal-actions";
+import IngredientDetails from "../ingredient-details/ingredient-details";
+import Modal from "../modal/modal";
+import {HistoryOrders} from "../../pages/history-orders";
 
 function App() {
     const [isLoading, setIsLoading] = useState(true);
+    const history = useHistory();
+    const location = useLocation();
 
     const {feedIngredientsRequest, feedIngredientsFailed, feedIngredients} =
         useSelector((state: typeof defaultAllIngredientsState) => state.allIngredientsReducer);
+
     // @ts-ignore
-    const {constructorIngredient} = useSelector((state)  => state.draggableConstructorReducer);
+    const {image, name, calories, proteins, fat, carbohydrates} = useSelector((state) => state.ingredientReducer.detailsIngredient);
+    // @ts-ignore
+    const {ingredientReady} = useSelector((state) => state.ingredientReducer)
+    // @ts-ignore
+    const {isShowModal} = useSelector((state) => state.modalReducer);
+
+    // @ts-ignore
+    const {constructorIngredient} = useSelector((state) => state.draggableConstructorReducer);
 
     const dispatch = useDispatch();
+    // @ts-ignore
+    const background = location.state && location.state.background;
 
     useEffect(() => {
         dispatch(getFeed() as any);
@@ -39,41 +57,143 @@ function App() {
         }
     }, [feedIngredientsRequest])
 
-    if (isLoading) {
-        return <LoadingPage />;
-    }
+    useEffect(() => {
+        const onEsc = (e: any) => {
+            if (e.key === 'Escape') {
+                handleCloseModal();
+            }
+        }
+        document.addEventListener('keydown', onEsc);
+
+        return () => document.removeEventListener('keydown', onEsc);
+    }, [])
 
     const onDropHandler = async (item: any) => {
         dispatch(addIngredient(item, constructorIngredient) as any)
     };
 
+
+    const handleCloseModal = () => {
+        dispatch({
+            type: CLEAR_ORDER
+        })
+        dispatch({
+            type: CLEAR_INGREDIENT
+        })
+        dispatch({
+            type: CLOSE_MODAL
+        })
+        history.replace('/')
+    }
+
+    if (isLoading) {
+        return <LoadingPage/>;
+    }
+
+    const renderNoModalIngredient = () => {
+        const idNoModalIngredient = location.pathname.split('/')[2];
+        // @ts-ignore
+        const item: {name: string, calories: number, image: string, proteins: number, fat: number, carbohydrates: number}
+        // @ts-ignore
+        = feedIngredients.data.find((item) => item._id === idNoModalIngredient);
+
+        return (
+            <>
+            {!isLoading &&
+                <IngredientDetails
+                    src={item.image}
+                    name={item.name}
+                    calories={item.calories}
+                    proteins={item.proteins}
+                    fat={item.fat}
+                    carbohydrates={item.carbohydrates}
+                    single={true}
+                />
+        }</>
+    )
+    }
+
     return (
         <>
             {!isLoading &&
-        <>
-            {feedIngredientsFailed &&
-            <ErrorPage/>
-            }
-            {feedIngredientsRequest &&
-            <LoadingPage/>
-            }
-            {!feedIngredientsRequest && !feedIngredientsFailed &&
             <>
-                <DndProvider backend={HTML5Backend}>
-                    <div className={appStyles.wrapperHeader}>
-                        <AppHeader/>
-                    </div>
-                    <h1 id="1" className={appStyles.titleMargin}>
-                        Соберите бургер
-                    </h1>
-                    <div className={appStyles.wrapper}>
-                        <BurgerIngredients />
-                        <BurgerConstructor onDropHandler={onDropHandler}/>
-                    </div>
-                </DndProvider>
+                {feedIngredientsFailed &&
+                <ErrorPage/>
+                }
+                {feedIngredientsRequest &&
+                <LoadingPage/>
+                }
+                {!feedIngredientsRequest && !feedIngredientsFailed &&
+                <>
+                        <div className={appStyles.wrapperHeader}>
+                            <AppHeader/>
+                        </div>
+
+                        {isShowModal && ingredientReady && background &&
+                        <Route path="/ingredients/:id">
+                            <Modal
+                                handleCloseModal={handleCloseModal}
+                                isIngredientDetail={true}
+                            >
+                                <IngredientDetails
+                                    src={image}
+                                    name={name}
+                                    calories={calories}
+                                    proteins={proteins}
+                                    fat={fat}
+                                    carbohydrates={carbohydrates}
+                                />
+                            </Modal>
+                        </Route>
+                        }
+
+                        <Switch>
+                            <Route path="/" exact={true}>
+                                <DndProvider backend={HTML5Backend}>
+
+                                    <h1 id="1" className={appStyles.titleMargin}>
+                                        Соберите бургер
+                                    </h1>
+                                    <div className={appStyles.wrapper}>
+                                        <BurgerIngredients/>
+                                        <BurgerConstructor onDropHandler={onDropHandler}/>
+                                    </div>
+                                </DndProvider>
+                            </Route>
+
+                            <ProtectedAuthRoute onlyUnAuth={true} path="/login" exact={true}>
+                                <Login/>
+                            </ProtectedAuthRoute>
+
+                            <ProtectedAuthRoute onlyUnAuth={true} path="/forgot-password" exact={true}>
+                                <ForgotPassword/>
+                            </ProtectedAuthRoute>
+
+                            <ProtectedAuthRoute onlyUnAuth={true} path="/register" exact={true}>
+                                <Registration/>
+                            </ProtectedAuthRoute>
+
+                            <ProtectedAuthRoute onlyUnAuth={true} path="/reset-password" exact={true}>
+                                <ResetPassword/>
+                            </ProtectedAuthRoute>
+
+                            <ProtectedAuthRoute path="/profile" exact={true}>
+                                <Profile/>
+                            </ProtectedAuthRoute>
+
+                            <ProtectedAuthRoute path="/profile/orders" exact={true}>
+                                <HistoryOrders />
+                            </ProtectedAuthRoute>
+
+                            {!isShowModal &&
+                                <Route path="/ingredients/:id" exact={true}>
+                                    {renderNoModalIngredient}
+                                </Route>
+                            }
+                        </Switch>
+                </>
+                }
             </>
-            }
-        </>
             }
         </>
     );

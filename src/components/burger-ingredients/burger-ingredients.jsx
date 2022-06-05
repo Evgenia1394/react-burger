@@ -2,12 +2,16 @@ import React, {useEffect, useRef, useState} from 'react';
 import {Tab} from "@ya.praktikum/react-developer-burger-ui-components";
 import burgerIngredientsStyles from './burger-ingredients.module.css';
 import IngredientCard from '../ingredient-card/ingredient-card';
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
+import {OPEN_INGREDIENT} from "../../services/actions/ingredient-actions";
+import {OPEN_MODAL} from "../../services/actions/modal-actions";
 
-const BurgerIngredients = (props) => {
+const BurgerIngredients = () => {
+    const dispatch = useDispatch()
+
     const [current, setCurrent] = useState('Булки');
     const {feedIngredientsRequest, feedIngredientsFailed, feedIngredients} =
-        useSelector((state)  => state.allIngredientsReducer);
+        useSelector((state) => state.allIngredientsReducer);
 
     const buns = feedIngredients.data.filter(ingredient => ingredient.type === 'bun');
     const sauces = feedIngredients.data.filter(ingredient => ingredient.type === 'sauce')
@@ -19,6 +23,7 @@ const BurgerIngredients = (props) => {
     const menuRef = useRef();
 
     const scrollHandler = () => {
+        if(!menuRef.current) return;
         const menuHeight = menuRef.current.getBoundingClientRect().top;
         const sauceHeight = Math.abs(tabSauceRef.current.getBoundingClientRect().top - menuHeight);
         const bunHeight = Math.abs(tabBunRef.current.getBoundingClientRect().top - menuHeight);
@@ -39,6 +44,16 @@ const BurgerIngredients = (props) => {
         };
     }, []);
 
+    const handleOpenModal = (_id) => {
+        const currentProduct = feedIngredients.data.find(item => item._id === _id);
+            dispatch({
+                type: OPEN_INGREDIENT,
+                payload: currentProduct
+            })
+            dispatch({
+                type: OPEN_MODAL,
+            });
+        }
     return (
         <div>
             <div ref={menuRef} className={burgerIngredientsStyles.wrapperTab}>
@@ -65,9 +80,12 @@ const BurgerIngredients = (props) => {
                         Булки
                     </h2>
                 </div>
-                <div className={burgerIngredientsStyles.category}>
+                <div  className={burgerIngredientsStyles.category}>
                     {buns.map((burger) => (
-                        <IngredientCard key={burger._id} data={burger} />
+                        <div  key={burger._id} onClick={()=>handleOpenModal(burger._id)} >
+                            <IngredientCard data={burger} />
+                        </div>
+
                     ))}
                 </div>
                 <h2 ref={tabSauceRef} className="text text_type_main-medium"
@@ -76,7 +94,9 @@ const BurgerIngredients = (props) => {
                 </h2>
                 <div className={burgerIngredientsStyles.category}>
                     {sauces.map((burger) => (
-                        <IngredientCard key={burger._id} data={burger} />
+                        <div key={burger._id} onClick={()=>handleOpenModal(burger._id)} >
+                            <IngredientCard  data={burger} />
+                        </div>
                     ))}
                 </div>
                 <h2 ref={tabMainRef} className="text text_type_main-medium"
@@ -85,7 +105,9 @@ const BurgerIngredients = (props) => {
                 </h2>
                 <div className={burgerIngredientsStyles.category}>
                     {mains.map((burger) => (
-                        <IngredientCard key={burger._id} data={burger} />
+                        <div  key={burger._id} onClick={()=>handleOpenModal(burger._id)} >
+                            <IngredientCard data={burger} />
+                        </div>
                     ))}
                 </div>
             </div>

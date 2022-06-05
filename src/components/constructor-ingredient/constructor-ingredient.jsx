@@ -4,11 +4,10 @@ import React, {useRef, useState} from "react";
 import {useDrag, useDrop} from "react-dnd";
 import {useDispatch, useSelector} from "react-redux";
 import {DECREASE_COUNT, SORT_INGREDIENT} from "../../services/actions/constructor-actions";
+import {burgerItem} from "../burgerItem";
 
 export const ConstructorIngredient = (props) => {
 
-    const [dropItem, setDropItem] = useState(null);
-    const {constructorIngredient} = useSelector((state) => state.draggableConstructorReducer);
     const ref = useRef(null);
     const item = props.ingredient;
     const dispatch = useDispatch();
@@ -61,3 +60,7 @@ export const ConstructorIngredient = (props) => {
     </div>
     )
 }
+
+ConstructorIngredient.propTypes = {
+    ingredient: burgerItem.isRequired,
+};

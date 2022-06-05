@@ -1,11 +1,16 @@
-import {CheckMarkIcon} from "@ya.praktikum/react-developer-burger-ui-components";
 import React from "react";
 import orderDetailsStyles from './order-details.module.css'
 import {number} from "prop-types";
 import doneImage from '../../images/done.svg'
+import ErrorPage from "../error-page/error-page";
 
 const OrderDetails = (props) => {
     const {orderNumber} = props;
+
+    //или можно isRequired убрать? Не понимаю, почему такое бывает и в каком случае(((
+    if (!orderNumber) {
+        return <ErrorPage />
+    }
     return (
         <>
             <h3 className={orderDetailsStyles.identification}>
@@ -26,6 +31,7 @@ const OrderDetails = (props) => {
         </>
     )
 }
+
 
 OrderDetails.propTypes = {
     orderNumber: number.isRequired,

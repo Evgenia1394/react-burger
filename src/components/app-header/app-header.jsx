@@ -1,6 +1,7 @@
 import React from 'react';
 import {BurgerIcon, ListIcon, Logo, ProfileIcon} from '@ya.praktikum/react-developer-burger-ui-components';
-import headerStyles from './app-header.module.css'
+import headerStyles from './app-header.module.css';
+import {NavLink} from "react-router-dom";
 
 
 const AppHeader = () => {
@@ -9,28 +10,43 @@ const AppHeader = () => {
             <header className={headerStyles.header}>
                 <nav className={headerStyles.nav}>
                     <div className={headerStyles.two}>
-                        <a className={headerStyles.item}>
+
+                        <NavLink to={''}
+                                 activeStyle={{color: '#F2F2F3'}}
+                                 className={headerStyles.item}
+                                 exact={true}
+                        >
                             <div className={headerStyles.icon}>
-                                <BurgerIcon type="primary"/>
+                                <BurgerIcon type="secondary"/>
                             </div>
-                            <div className="text text_type_main-default">Конструктор</div>
-                        </a>
-                        <a className={headerStyles.item}>
+                            <p>Конструктор</p>
+                        </NavLink>
+
+                        <NavLink
+                            to={'history/order'}
+                            activeStyle={{color: '#F2F2F3'}}
+                            className={headerStyles.item}>
                             <div className={headerStyles.icon}>
                                 <ListIcon type="secondary"/>
                             </div>
-                            <div className="text text_type_main-default text_color_inactive">Лента заказов</div>
-                        </a>
+                            <p>Лента заказов</p>
+                        </NavLink>
+
                     </div>
-                    <div className={headerStyles.logo}>
+
+                    <NavLink to={''} className={headerStyles.logo}>
                         <Logo/>
-                    </div>
-                    <a className={headerStyles.item}>
+                    </NavLink>
+
+                    <NavLink to={'profile'}
+                             activeStyle={{color: '#F2F2F3'}}
+                             className={headerStyles.item}>
                         <div className={headerStyles.icon}>
                             <ProfileIcon type="secondary"/>
                         </div>
-                        <div className="text text_type_main-default text_color_inactive">Личный кабинет</div>
-                    </a>
+                        <p>Личный кабинет</p>
+                    </NavLink>
+
                 </nav>
             </header>
         </section>

@@ -3,11 +3,12 @@ import React from "react";
 import PropTypes from "prop-types";
 
 const IngredientDetails = (props) => {
-    const {src, name, calories, proteins, fat, carbohydrates} = props;
+    const {src, name, calories, proteins, fat, carbohydrates, single} = props;
+
     return (
         <>
             <div className={ingredientDetailsStyles.wrapper}>
-                <h2 className={ingredientDetailsStyles.header}>
+                <h2 className={single ? ingredientDetailsStyles.singleHeader : ingredientDetailsStyles.header}>
                     <p className="text text_type_main-large">
                         Детали ингредиента
                     </p>
@@ -15,7 +16,7 @@ const IngredientDetails = (props) => {
                 <div className={ingredientDetailsStyles.productImage}>
                     <img src={src} alt={name}/>
                 </div>
-                <p className="text text_type_main-medium">
+                <p className={single ? ingredientDetailsStyles.singleIngredientName : ingredientDetailsStyles.ingredientName}>
                     {name}
                 </p>
                 <div className={ingredientDetailsStyles.composition}>
@@ -64,6 +65,7 @@ IngredientDetails.propTypes = {
     proteins: PropTypes.number.isRequired,
     fat: PropTypes.number.isRequired,
     carbohydrates: PropTypes.number.isRequired,
+    single: PropTypes.bool
 }
 
 export default IngredientDetails;
