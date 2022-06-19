@@ -6,18 +6,19 @@ import authStyles from "./auth.module.css";
 import {useDispatch} from "react-redux";
 import {resetPassword} from "../services/actions/thunks";
 import getCookie from "../utils/get-cookie";
+import {SyntheticEvent} from "../types";
 
 export const ResetPassword = () => {
-    const [form, setValue] = useState({
+    const [form, setValue] = useState<IPassword>({
         password: '',
         code: ''
     });
 
     const dispatch = useDispatch();
     const history = useHistory();
-    const { state: stateLocation } = useLocation();
+    const { state: stateLocation }: {state: {from: string}} = useLocation();
 
-    const onChange = e => {
+    const onChange = (e: SyntheticEvent) => {
         const target = e.target;
         const value = target.value;
         const name = target.name;
@@ -27,14 +28,15 @@ export const ResetPassword = () => {
         });
     };
 
-    const inputRef = useRef(null)
+    const inputRef = useRef<HTMLInputElement>(null)
     const onIconClick = () => {
-        setTimeout(() => inputRef.current.focus(), 0)
+        setTimeout(() => inputRef?.current?.focus(), 0)
         alert('Icon Click Callback')
     }
 
-    const resetRequest = (e) => {
+    const resetRequest = (e: SyntheticEvent) => {
         e.preventDefault();
+        // @ts-ignore
         dispatch(resetPassword(form.password, form.code));
     }
 
@@ -46,17 +48,23 @@ export const ResetPassword = () => {
         history.replace({pathname: '/'})
     }
 
+
     return (
         <>
             <div className={authStyles.main}>
-                <form className={authStyles.form} onSubmit={resetRequest}>
+                <form className={authStyles.form}
+                    // @ts-ignore
+                      onSubmit={resetRequest}>
                     <p className="text text_type_main-medium">
                         Восстановление пароля
                     </p>
-                    <PasswordInput onChange={onChange} value={form.password} name={'password'} />
+                    <PasswordInput
+                        // @ts-ignore
+                        onChange={onChange} value={form.password} name={'password'} />
                     <Input
                         type={'text'}
                         placeholder={'Введите код из письма'}
+                        // @ts-ignore
                         onChange={onChange}
                         icon={'CurrencyIcon'}
                         value={form.code}
@@ -67,7 +75,10 @@ export const ResetPassword = () => {
                         errorText={'Ошибка'}
                         size={'default'}
                     />
-                    <Button type="submit" size="medium">
+
+                    <Button
+                        // @ts-ignore
+                        type="submit" size="medium">
                         Сохранить
                     </Button>
                     <p className="text text_type_main-default text_color_inactive">
@@ -77,4 +88,9 @@ export const ResetPassword = () => {
             </div>
         </>
     )
+}
+
+interface IPassword {
+    password: string,
+    code: string
 }

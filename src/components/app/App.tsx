@@ -24,9 +24,11 @@ import {CLOSE_MODAL} from "../../services/actions/modal-actions";
 import IngredientDetails from "../ingredient-details/ingredient-details";
 import Modal from "../modal/modal";
 import {HistoryOrders} from "../../pages/history-orders";
+import {keyboardKey} from "@testing-library/user-event";
+import {IBurgerItem} from "../../types";
 
 function App() {
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
     const history = useHistory();
     const location = useLocation();
 
@@ -58,7 +60,7 @@ function App() {
     }, [feedIngredientsRequest])
 
     useEffect(() => {
-        const onEsc = (e: any) => {
+        const onEsc = (e: keyboardKey) => {
             if (e.key === 'Escape') {
                 handleCloseModal();
             }
@@ -68,8 +70,9 @@ function App() {
         return () => document.removeEventListener('keydown', onEsc);
     }, [])
 
-    const onDropHandler = async (item: any) => {
-        dispatch(addIngredient(item, constructorIngredient) as any)
+    const onDropHandler = (item: IBurgerItem) => {
+        // @ts-ignore
+        dispatch(addIngredient(item, constructorIngredient))
     };
 
 
@@ -200,5 +203,4 @@ function App() {
 };
 
 export default App;
-
 

@@ -7,20 +7,22 @@ import {editUserInfo, logOut} from "../services/actions/thunks";
 import getCookie from "../utils/get-cookie";
 import {CLEAR_USER} from "../services/actions/user-info-actions";
 import {NOT_LOGGED} from "../services/actions/isLogged-actions";
+import {IForm, SyntheticEvent} from "../types";
 
 export const Profile = () => {
+    // @ts-ignore
     let {feedUserInfoRequest, feedUserInfoFailed, feedUserInfo} = useSelector(state => state.userInfoReducer);
-    const [form, setForm] = useState({
+    const [form, setForm] = useState<IForm>({
         name: feedUserInfo.user.name,
         email: feedUserInfo.user.email,
         password: ""
     });
 
-    const [prevform, setPrevForm] = useState(form);
+    const [prevform, setPrevForm] = useState<IForm>(form);
     const dispatch = useDispatch();
     const history = useHistory();
 
-    const onChange = e => {
+    const onChange = (e: SyntheticEvent) => {
         const target = e.target;
         const value = target.value;
         const name = target.name;
@@ -30,13 +32,14 @@ export const Profile = () => {
         });
 
     }
-    const inputRef = useRef(null)
+    const inputRef = useRef<HTMLInputElement>(null)
     const onIconClick = () => {
-        setTimeout(() => inputRef.current.focus(), 0)
+        setTimeout(() => inputRef?.current?.focus(), 0)
         alert('Icon Click Callback')
     }
 
     const signOut = async () => {
+        // @ts-ignore
         await dispatch(logOut(getCookie('token')));
         if (!getCookie('token')) {
             await dispatch({type: NOT_LOGGED})
@@ -45,16 +48,16 @@ export const Profile = () => {
         await history.replace({pathname: '/login'})
     }
 
-    const editUser = (e) => {
+    const editUser = (e: SyntheticEvent) => {
         e.preventDefault();
-        const changedFields = {}
+        const changedFields: IForm = {}
         for (let field in form) {
             if (form[field]) {
                 changedFields[field] = form[field]
             }
         }
 
-        let validatedFields = {};
+        let validatedFields: IForm = {};
 
         for (let val in changedFields) {
             if (changedFields[val] !== prevform[val]) {
@@ -65,6 +68,7 @@ export const Profile = () => {
         if (Object.keys(validatedFields).length == 0) {
             return;
         } else {
+            // @ts-ignore
             dispatch(editUserInfo(getCookie('accessToken'), validatedFields));
             setPrevForm(validatedFields);
         }
@@ -80,6 +84,7 @@ export const Profile = () => {
         });
     }
 
+    // @ts-ignore
     return (
         <>
             <div className={authStyles.mainProfile}>
@@ -116,12 +121,16 @@ export const Profile = () => {
                     </p>
                 </div>
 
-                <form className={authStyles.formProfile} onSubmit={editUser}>
+                <form className={authStyles.formProfile}
+                    // @ts-ignore
+                      onSubmit={editUser}>
                     <Input
                         type={'text'}
                         placeholder={'Имя'}
+                        // @ts-ignore
                         onChange={onChange}
                         icon={'EditIcon'}
+                        // @ts-ignore
                         value={form.name}
                         name={'name'}
                         error={false}
@@ -133,8 +142,10 @@ export const Profile = () => {
                     <Input
                         type={'email'}
                         placeholder={'Логин'}
+                        // @ts-ignore
                         onChange={onChange}
                         icon={'EditIcon'}
+                        // @ts-ignore
                         value={form.email}
                         name={'email'}
                         error={false}
@@ -146,8 +157,10 @@ export const Profile = () => {
                     <Input
                         type={'text'}
                         placeholder={'Пароль'}
+                        // @ts-ignore
                         onChange={onChange}
                         icon={'EditIcon'}
+                        // @ts-ignore
                         value={form.password}
                         name={'password'}
                         error={false}
@@ -155,13 +168,16 @@ export const Profile = () => {
                         onIconClick={onIconClick}
                         errorText={'Ошибка'}
                         size={'default'}
+                        // @ts-ignore
                         type={'password'}
                     />
                     <div className={authStyles.buttons}>
                         <Button type="primary" size="medium" onClick={resetForm}>
                             Отмена
                         </Button>
-                        <Button type="submit" size="large">
+                        <Button
+                            // @ts-ignore
+                            type="submit" size="large">
                             Сохранить
                         </Button>
                     </div>
@@ -170,3 +186,4 @@ export const Profile = () => {
         </>
     )
 }
+

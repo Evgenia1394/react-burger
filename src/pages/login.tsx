@@ -5,19 +5,20 @@ import './styles.css';
 import {Link, useHistory, useLocation} from 'react-router-dom';
 import {useDispatch} from "react-redux";
 import {logIn} from "../services/actions/thunks";
+import {IForm, SyntheticEvent} from "../types";
 
 
 export const Login = () => {
-    const [form, setValue] = useState({
+    const [form, setValue] = useState<IForm>({
         email: '',
         password: ''
     });
 
     const history = useHistory();
     const dispatch = useDispatch();
-    const { state } = useLocation();
+    const { state }: {state: {from: string}} = useLocation();
 
-    const onChange = e => {
+    const onChange = (e: SyntheticEvent) => {
         const target = e.target;
         const value = target.value;
         const name = target.name;
@@ -27,9 +28,10 @@ export const Login = () => {
         });
     }
 
-    const signIn = (e) => {
+    const signIn = (e: SyntheticEvent) => {
 
         e.preventDefault();
+        // @ts-ignore
         dispatch(logIn(form.email, form.password));
 
         if (state?.from) {
@@ -38,19 +40,27 @@ export const Login = () => {
         history.replace({pathname: '/'})
     }
 
-        return (
+    return (
             <>
                 <div className={authStyles.main}>
-                    <form className={authStyles.form} onSubmit={signIn}>
+                    <form className={authStyles.form}
+                        // @ts-ignore
+                          onSubmit={signIn}>
                         <p className="text text_type_main-medium">
                             Вход
                         </p>
 
                             <div className={authStyles.input}>
-                                <EmailInput onChange={onChange} value={form.email} name={'email'}/>
+                                <EmailInput
+                                    // @ts-ignore
+                                    onChange={onChange} value={form.email} name={'email'}/>
                             </div>
-                            <PasswordInput onChange={onChange} value={form.password} name={'password'}/>
-                            <Button type="submit" size="medium">
+                            <PasswordInput
+                                // @ts-ignore
+                                onChange={onChange} value={form.password} name={'password'}/>
+                            <Button
+                                // @ts-ignore
+                                type="submit" size="medium">
                                 Войти
                             </Button>
 
@@ -66,3 +76,5 @@ export const Login = () => {
             </>
         )
 }
+
+

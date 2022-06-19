@@ -16,22 +16,24 @@ import {ConstructorIngredient} from "../constructor-ingredient/constructor-ingre
 import getCookie from "../../utils/get-cookie";
 import {useHistory} from "react-router-dom";
 import {CLOSE_MODAL, OPEN_MODAL} from "../../services/actions/modal-actions";
-import PropTypes from "prop-types";
 import {CLEAR_ORDER} from "../../services/actions/order-actions";
 import {CLEAR_INGREDIENT} from "../../services/actions/ingredient-actions";
+import {IBurgerItem} from "../../types";
 
-const BurgerConstructor = ({onDropHandler}) => {
-
-    const [visible, setVisible] = useState(false);
+const BurgerConstructor = (props: IBurgerConstructorProps) => {
+    const {onDropHandler} = props;
+    const [visible, setVisible] = useState<React.SetStateAction<boolean>>(false);
+    // @ts-ignore
     const {constructorIngredient} = useSelector((state) => state.draggableConstructorReducer);
-
+    // @ts-ignore
     const {postOrderRequest, postOrderFailed, postOrderFeed} = useSelector((state) => state.orderReducer);
+    // @ts-ignore
     const {isShowModal} = useSelector((state) => state.modalReducer);
 
     const [loading, setLoading] = useState(true);
 
-    const notBun = constructorIngredient.filter(ingredient => (ingredient.type !== 'bun' && ingredient.count > 0))
-    const bun = constructorIngredient.find(ingredient => (ingredient.type === 'bun'));
+    const notBun = constructorIngredient.filter((ingredient: IBurgerItem) => (ingredient.type !== 'bun' && ingredient.count && ingredient.count > 0))
+    const bun = constructorIngredient.find((ingredient: IBurgerItem) => (ingredient.type === 'bun'));
     const dispatch = useDispatch();
     const history = useHistory();
 
@@ -45,6 +47,7 @@ const BurgerConstructor = ({onDropHandler}) => {
     const [, dropTarget] = useDrop({
         accept: 'ingredients',
         drop(itemId) {
+        // @ts-ignore
             onDropHandler(itemId);
         }
     })
@@ -65,6 +68,7 @@ const BurgerConstructor = ({onDropHandler}) => {
         if (getCookie('token') === undefined) {
             return history.push("/login", { from: '/' })
         }
+        // @ts-ignore
         return dispatch(postOrder(arrId));
     }
 
@@ -88,7 +92,7 @@ const BurgerConstructor = ({onDropHandler}) => {
     }
 
     return (
-        <section className={burgerStyles.constructor}>
+        <section className={burgerStyles.constructors}>
             <div className={burgerStyles.constructorContent}>
                 <div className={burgerStyles.bun}>
                     {bun &&
@@ -103,8 +107,8 @@ const BurgerConstructor = ({onDropHandler}) => {
                 </div>
                 <div className={burgerStyles.wrapper} ref={dropTarget}>
                     {notBun.length ?
-                        notBun.map((ingredient, id) => {
-                            if (ingredient.count > 1) {
+                        notBun.map((ingredient: IBurgerItem, id: string) => {
+                            if (ingredient.count && ingredient.count > 1) {
                                 let array = []
                                 let count = ingredient.count
                                 for (count; count !== 0; count--) {
@@ -152,7 +156,7 @@ const BurgerConstructor = ({onDropHandler}) => {
                 {visible && !loading && isShowModal &&
                 <Modal
                     handleCloseModal={handleCloseModal}
-                    setVisible={setVisible}>
+                >
                     <OrderDetails orderNumber={postOrderFeed?.order?.number}/>
                 </Modal>
                 }
@@ -161,8 +165,8 @@ const BurgerConstructor = ({onDropHandler}) => {
     )
 };
 
-BurgerConstructor.propTypes = {
-    onDropHandler: PropTypes.func
+export interface IBurgerConstructorProps {
+    onDropHandler: (item: IBurgerItem) => void;
 }
 
 export default BurgerConstructor;

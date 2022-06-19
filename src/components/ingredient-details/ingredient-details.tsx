@@ -1,8 +1,7 @@
 import ingredientDetailsStyles from './ingredient-details.module.css'
 import React from "react";
-import PropTypes from "prop-types";
 
-const IngredientDetails = (props) => {
+const IngredientDetails = (props: IIngredientDetails) => {
     const {src, name, calories, proteins, fat, carbohydrates, single} = props;
 
     return (
@@ -58,14 +57,14 @@ const IngredientDetails = (props) => {
     )
 }
 
-IngredientDetails.propTypes = {
-    name: PropTypes.string.isRequired,
-    src: PropTypes.string.isRequired,
-    calories: PropTypes.number.isRequired,
-    proteins: PropTypes.number.isRequired,
-    fat: PropTypes.number.isRequired,
-    carbohydrates: PropTypes.number.isRequired,
-    single: PropTypes.bool
+export interface IIngredientDetails {
+    name: string,
+    src: string,
+    calories: number,
+    proteins: number,
+    fat: number,
+    carbohydrates: number,
+    single?: boolean
 }
 
 export default IngredientDetails;

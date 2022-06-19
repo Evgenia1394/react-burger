@@ -1,14 +1,13 @@
-import React from 'react';
+import React, {FC} from 'react';
 import ReactDOM from 'react-dom';
 import modalStyles from './modal.module.css';
-import PropTypes from "prop-types";
 import orderDetailsStyles from "../order-details/order-details.module.css";
 import {CloseIcon} from "@ya.praktikum/react-developer-burger-ui-components";
 import ModalOverlay from "../modal-overlay/modal-overlay";
 
-const modalRoot = document.getElementById("modal-root");
+const modalRoot: HTMLElement | null = document.getElementById("modal-root");
 
-const Modal = (props) => {
+const Modal: FC<IModalProps> = (props) => {
     const { children } = props;
 
     return ReactDOM.createPortal(
@@ -24,16 +23,14 @@ const Modal = (props) => {
             <ModalOverlay handleCloseModal={props.handleCloseModal}/>
         </>
         ,
-        modalRoot
+        modalRoot as HTMLElement
     );
 }
 
-Modal.propTypes = {
-    children: PropTypes.node,
-    closeEsc: PropTypes.func,
-    handleCloseModal: PropTypes.func,
-    handleOverlayModal: PropTypes.func,
-    isIngredientDetail: PropTypes.bool
+export interface IModalProps {
+    closeEsc?: Function,
+    handleCloseModal: () => void,
+    isIngredientDetail?: boolean
 }
 
 export default Modal;

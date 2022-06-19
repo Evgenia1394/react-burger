@@ -1,14 +1,6 @@
-function setCookie(name, value, options = {}) {
+import {IForm} from "../types";
 
-    options = {
-        path: '/',
-        // при необходимости добавьте другие значения по умолчанию
-        ...options
-    };
-
-    if (options.expires instanceof Date) {
-        options.expires = options.expires.toUTCString();
-    }
+function setCookie(name: string, value: string, options?: IForm) {
 
     let updatedCookie = encodeURIComponent(name) + "=" + encodeURIComponent(value);
 
@@ -23,7 +15,7 @@ function setCookie(name, value, options = {}) {
     document.cookie = updatedCookie;
 }
 
-function deleteCookie(name) {
+function deleteCookie(name: string) {
     setCookie(name, "", {
         'max-age': -1
     })

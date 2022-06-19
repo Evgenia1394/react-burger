@@ -63,7 +63,7 @@
     font-weight: bold;
     line-height: 1.1;
 }
-.constructor {
+.constructors {
     display: flex;
     flex-direction: column;
     justify-content: space-between;

@@ -1,12 +1,12 @@
 import burgerStyles from "../burger-constructor/burger-constructor.module.css";
 import {ConstructorElement, DragIcon} from "@ya.praktikum/react-developer-burger-ui-components";
-import React, {useRef, useState} from "react";
+import React, {LegacyRef, useRef} from "react";
 import {useDrag, useDrop} from "react-dnd";
 import {useDispatch, useSelector} from "react-redux";
 import {DECREASE_COUNT, SORT_INGREDIENT} from "../../services/actions/constructor-actions";
-import {burgerItem} from "../burgerItem";
+import {IBurgerItem} from "../../types";
 
-export const ConstructorIngredient = (props) => {
+export const ConstructorIngredient = (props: IConstructorIngredient) => {
 
     const ref = useRef(null);
     const item = props.ingredient;
@@ -29,26 +29,29 @@ export const ConstructorIngredient = (props) => {
             })
         }
     });
-    dragRef(dropTarget(ref));
+    (dragRef(dropTarget(ref)));
 
-    const handleClose = (id) => {
+    const handleClose = (id: string) => {
         dispatch({
             type: DECREASE_COUNT,
             id: id
         })
     }
 
+
     return (
     <div className={burgerStyles.wrapperItem}
          key={props.key}
-         ref={dragRef(dropTarget(ref))}
+         ref={dragRef(dropTarget(ref)) as LegacyRef<HTMLDivElement> | undefined}
     >
         <div className={burgerStyles.dragIcon} >
             <DragIcon type="primary"/>
         </div>
         <div className={burgerStyles.product}>
             <ConstructorElement
-                handleClose={e => handleClose(props.ingredient._id)}
+                // @ts-ignore
+                handleClose={(e: SyntheticEvent) => handleClose(props.ingredient._id)}
+                // @ts-ignore
                 type={props.ingredient.type}
                 isLocked={props.ingredient.type === 'bun'}
                 text={props.ingredient.name}
@@ -61,6 +64,9 @@ export const ConstructorIngredient = (props) => {
     )
 }
 
-ConstructorIngredient.propTypes = {
-    ingredient: burgerItem.isRequired,
-};
+export interface IConstructorIngredient {
+    ingredient: IBurgerItem,
+    key?: string
+}
+
+

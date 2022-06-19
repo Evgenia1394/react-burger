@@ -1,22 +1,23 @@
 import React from 'react';
 import ingredientCardStyles from './ingredient-card.module.css';
 import {Counter, CurrencyIcon} from "@ya.praktikum/react-developer-burger-ui-components";
-import {burgerItem} from '../burgerItem';
 import {useDrag} from "react-dnd";
 import {useSelector} from "react-redux";
 import {Link} from "react-router-dom";
+import {IBurgerItem} from "../../types";
 
-const IngredientCard = (props) => {
+const IngredientCard = (props: IIngredientCard) => {
     const {data} = props;
     const {image, name, calories, proteins, fat, carbohydrates, price, _id, type} = props.data;
+    // @ts-ignore
     const {constructorIngredient} = useSelector((state) => state.draggableConstructorReducer);
 
-    const count = constructorIngredient.filter(ingredient => (ingredient._id === _id))
-            .filter(ingredient => ingredient.type !== 'bun')[0] ?
-            constructorIngredient.filter(ingredient => ingredient._id === _id)[0].count : 0;
+    const count = constructorIngredient.filter((ingredient: IBurgerItem) => (ingredient._id === _id))
+            .filter((ingredient: IBurgerItem) => ingredient.type !== 'bun')[0] ?
+            constructorIngredient.filter((ingredient: IBurgerItem) => ingredient._id === _id)[0].count : 0;
 
-    const bunCount = constructorIngredient.filter(ingredient => (ingredient._id === _id))
-        .filter(ingredient => ingredient.type === 'bun')[0] ? 1 : 0;
+    const bunCount = constructorIngredient.filter((ingredient: IBurgerItem) => (ingredient._id === _id))
+        .filter((ingredient: IBurgerItem) => ingredient.type === 'bun')[0] ? 1 : 0;
 
     const item = data;
     const [{isDrag}, dragRef] = useDrag({
@@ -54,8 +55,8 @@ const IngredientCard = (props) => {
         )
 }
 
-IngredientCard.propTypes = {
-    data: burgerItem.isRequired,
+export interface IIngredientCard {
+    data: IBurgerItem
 }
 
 export default IngredientCard;

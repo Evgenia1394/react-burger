@@ -1,8 +1,7 @@
-import React from 'react';
-import modalOverlayStyles from './modal-overlay.module.css'
-import PropTypes from "prop-types";
+import React, {FC, MouseEventHandler} from 'react';
+import modalOverlayStyles from './modal-overlay.module.css';
 
-const ModalOverlay = (props) => {
+const ModalOverlay: FC<IModalOverlayProps> = (props) => {
     const {handleCloseModal, children} = props;
     return (
         <div className={modalOverlayStyles.main}
@@ -15,9 +14,8 @@ const ModalOverlay = (props) => {
     );
 }
 
-ModalOverlay.propTypes = {
-    children: PropTypes.func,
-    handleOverlayModal: PropTypes.func
+export interface IModalOverlayProps {
+    handleCloseModal: MouseEventHandler<HTMLDivElement> | undefined;
 }
 
 export default ModalOverlay;
