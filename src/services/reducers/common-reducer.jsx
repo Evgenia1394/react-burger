@@ -3,10 +3,26 @@ import {allIngredientsReducer} from "./all-ingredients-reducer";
 import {draggableConstructorReducer} from "./constructor-reducer";
 import {orderReducer} from "./order-reducer";
 import {ingredientReducer} from "./ingredient-reducer";
+import {forgotPasswordReducer} from "./forgot-password-reducer";
+import {resetPasswordReducer} from "./reset-password-reducer";
+import {registrationReducer} from "./registration-reducer";
+import {loginReducer} from "./login-reducer";
+import {logoutReducer} from "./logout-reducer";
+import {userInfoReducer} from "./user-info-reducer";
+import {modalReducer} from "./modal-reducer";
+import {isLoggedReducer} from "./isLogged-reducer";
 
 export const commonReducer = combineReducers({
     allIngredientsReducer,
     draggableConstructorReducer,
     orderReducer,
-    ingredientReducer
+    ingredientReducer,
+    forgotPasswordReducer,
+    resetPasswordReducer,
+    registrationReducer,
+    loginReducer,
+    logoutReducer,
+    userInfoReducer,
+    modalReducer,
+    isLoggedReducer
     })

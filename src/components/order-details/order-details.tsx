@@ -1,11 +1,14 @@
-import {CheckMarkIcon} from "@ya.praktikum/react-developer-burger-ui-components";
 import React from "react";
-import orderDetailsStyles from './order-details.module.css'
-import {number} from "prop-types";
-import doneImage from '../../images/done.svg'
+import orderDetailsStyles from './order-details.module.css';
+import doneImage from '../../images/done.svg';
+import ErrorPage from "../error-page/error-page";
 
-const OrderDetails = (props) => {
+const OrderDetails = (props: IOrderDetails) => {
     const {orderNumber} = props;
+
+    if (!orderNumber) {
+        return <ErrorPage />
+    }
     return (
         <>
             <h3 className={orderDetailsStyles.identification}>
@@ -27,8 +30,8 @@ const OrderDetails = (props) => {
     )
 }
 
-OrderDetails.propTypes = {
-    orderNumber: number.isRequired,
+export interface IOrderDetails {
+    orderNumber: string,
 }
 
 export default OrderDetails;

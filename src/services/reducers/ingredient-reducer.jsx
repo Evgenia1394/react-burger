@@ -1,7 +1,8 @@
 import {CLEAR_INGREDIENT, OPEN_INGREDIENT} from "../actions/ingredient-actions";
 
 export const defaultIngredientDetailsState = {
-    detailsIngredient: {}
+    detailsIngredient: {},
+    ingredientReady: false
 };
 
 export const ingredientReducer = (state = defaultIngredientDetailsState, action) => {
@@ -10,12 +11,14 @@ export const ingredientReducer = (state = defaultIngredientDetailsState, action)
             return {
                 ...state,
                 detailsIngredient: action.payload,
+                ingredientReady: true
             };
         }
         case CLEAR_INGREDIENT: {
             return {
                 ...state,
-                detailsIngredient: {}
+                detailsIngredient: {},
+                ingredientReady: false
             };
         }
         default: {
