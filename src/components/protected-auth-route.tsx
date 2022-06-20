@@ -1,12 +1,11 @@
-import {Redirect, Route, useLocation} from "react-router-dom";
+import {Redirect, Route, useLocation, RouteProps} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import LoadingPage from "./loading-page/loading-page";
 import {useEffect} from "react";
 import {userInfo} from "../services/actions/thunks";
 import getCookie from "../utils/get-cookie";
-import PropTypes, {string} from "prop-types";
 
-function ProtectedAuthRoute ({onlyUnAuth = false, ...rest}) {
+function ProtectedAuthRoute ({onlyUnAuth = false, ...rest}: RouteProps & {onlyUnAuth?: boolean}) {
 
     // @ts-ignore
     const isAuthChecked = useSelector((state) => state.userInfoReducer.isAuthChecked);

@@ -18,18 +18,14 @@ import {Registration} from "../../pages/registration";
 import {ResetPassword} from "../../pages/reset-password";
 import {Profile} from "../../pages/profile";
 import ProtectedAuthRoute from "../protected-auth-route";
-import {CLEAR_ORDER} from "../../services/actions/order-actions";
-import {CLEAR_INGREDIENT} from "../../services/actions/ingredient-actions";
-import {CLOSE_MODAL} from "../../services/actions/modal-actions";
 import IngredientDetails from "../ingredient-details/ingredient-details";
 import Modal from "../modal/modal";
 import {HistoryOrders} from "../../pages/history-orders";
-import {keyboardKey} from "@testing-library/user-event";
 import {IBurgerItem} from "../../types";
 
 function App() {
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const history = useHistory();
+
     const location = useLocation();
 
     const {feedIngredientsRequest, feedIngredientsFailed, feedIngredients} =
@@ -59,35 +55,10 @@ function App() {
         }
     }, [feedIngredientsRequest])
 
-    useEffect(() => {
-        const onEsc = (e: keyboardKey) => {
-            if (e.key === 'Escape') {
-                handleCloseModal();
-            }
-        }
-        document.addEventListener('keydown', onEsc);
-
-        return () => document.removeEventListener('keydown', onEsc);
-    }, [])
-
     const onDropHandler = (item: IBurgerItem) => {
         // @ts-ignore
         dispatch(addIngredient(item, constructorIngredient))
     };
-
-
-    const handleCloseModal = () => {
-        dispatch({
-            type: CLEAR_ORDER
-        })
-        dispatch({
-            type: CLEAR_INGREDIENT
-        })
-        dispatch({
-            type: CLOSE_MODAL
-        })
-        history.replace('/')
-    }
 
     if (isLoading) {
         return <LoadingPage/>;
@@ -135,7 +106,6 @@ function App() {
                         {isShowModal && ingredientReady && background &&
                         <Route path="/ingredients/:id">
                             <Modal
-                                handleCloseModal={handleCloseModal}
                                 isIngredientDetail={true}
                             >
                                 <IngredientDetails
