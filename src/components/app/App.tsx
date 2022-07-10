@@ -7,11 +7,9 @@ import appStyles from './app.module.css';
 import ErrorPage from '../error-page/error-page';
 import LoadingPage from "../loading-page/loading-page";
 import {addIngredient, getFeed} from "../../services/actions/thunks";
-import {useDispatch, useSelector} from "react-redux";
 import {DndProvider} from "react-dnd";
 import {HTML5Backend} from "react-dnd-html5-backend";
-import {defaultAllIngredientsState} from "../../services/reducers/all-ingredients-reducer";
-import { Route, Switch, useHistory, useLocation} from 'react-router-dom';
+import { Route, Switch, useLocation} from 'react-router-dom';
 import {Login} from "../../pages/login";
 import {ForgotPassword} from "../../pages/forgot-password";
 import {Registration} from "../../pages/registration";
@@ -20,43 +18,53 @@ import {Profile} from "../../pages/profile";
 import ProtectedAuthRoute from "../protected-auth-route";
 import IngredientDetails from "../ingredient-details/ingredient-details";
 import Modal from "../modal/modal";
-import {HistoryOrders} from "../../pages/history-orders";
 import {IBurgerItem} from "../../types";
+import {OrderFeed} from "../../pages/order-feed";
+import {BurgerСomposition} from "../feed/burger-composition";
+import {useMyDispatch, useMySelector} from "../../services/store";
 
 function App() {
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
-    const location = useLocation();
+    const location = useLocation<{background: Location | undefined}>();
 
-    const {feedIngredientsRequest, feedIngredientsFailed, feedIngredients} =
-        useSelector((state: typeof defaultAllIngredientsState) => state.allIngredientsReducer);
+    const allIngredients = useMySelector((state) => state.allIngredientsReducer);
+    let feedIngredientsRequest = allIngredients.feedIngredientsRequest;
+    let feedIngredientsFailed = allIngredients.feedIngredientsFailed;
+    let feedIngredients = allIngredients.feedIngredients;
 
-    // @ts-ignore
-    const {image, name, calories, proteins, fat, carbohydrates} = useSelector((state) => state.ingredientReducer.detailsIngredient);
-    // @ts-ignore
-    const {ingredientReady} = useSelector((state) => state.ingredientReducer)
-    // @ts-ignore
-    const {isShowModal} = useSelector((state) => state.modalReducer);
+    let currentOrder = useMySelector(state => state.oneOrderReducer.oneOrder);
 
-    // @ts-ignore
-    const {constructorIngredient} = useSelector((state) => state.draggableConstructorReducer);
+    const {detailsIngredient} = useMySelector((state) => state.ingredientReducer);
+    let image = detailsIngredient?.image;
+    let name = detailsIngredient?.name;
+    let calories = detailsIngredient?.calories;
+    let proteins = detailsIngredient?.proteins;
+    let fat = detailsIngredient?.fat;
+    let carbohydrates = detailsIngredient?.carbohydrates;
 
-    const dispatch = useDispatch();
-    // @ts-ignore
+
+    const {ingredientReady} = useMySelector((state) => state.ingredientReducer)
+
+    const {isShowModal} = useMySelector((state) => state.modalReducer);
+
+    const {constructorIngredient} = useMySelector((state) => state.draggableConstructorReducer);
+
+    const dispatch = useMyDispatch();
+
     const background = location.state && location.state.background;
 
     useEffect(() => {
-        dispatch(getFeed() as any);
-    }, [])
+        dispatch(getFeed());
+    }, [dispatch])
 
     useEffect(() => {
         if (feedIngredients) {
             setIsLoading(false)
         }
-    }, [feedIngredientsRequest])
+    }, [feedIngredientsRequest, feedIngredients])
 
     const onDropHandler = (item: IBurgerItem) => {
-        // @ts-ignore
         dispatch(addIngredient(item, constructorIngredient))
     };
 
@@ -66,14 +74,12 @@ function App() {
 
     const renderNoModalIngredient = () => {
         const idNoModalIngredient = location.pathname.split('/')[2];
-        // @ts-ignore
-        const item: {name: string, calories: number, image: string, proteins: number, fat: number, carbohydrates: number}
-        // @ts-ignore
-        = feedIngredients.data.find((item) => item._id === idNoModalIngredient);
+
+        const item: IBurgerItem | undefined = feedIngredients?.data?.find((item) => item._id === idNoModalIngredient);
 
         return (
             <>
-            {!isLoading &&
+            {!isLoading && item &&
                 <IngredientDetails
                     src={item.image}
                     name={item.name}
@@ -85,6 +91,15 @@ function App() {
                 />
         }</>
     )
+    }
+
+    const renderNoModalOrder = () => {
+        return (
+            <>
+                {!isLoading &&
+                    <BurgerСomposition single={true}/>
+                }</>
+        )
     }
 
     return (
@@ -103,7 +118,8 @@ function App() {
                             <AppHeader/>
                         </div>
 
-                        {isShowModal && ingredientReady && background &&
+                        {isShowModal && ingredientReady && background
+                        && image && name && calories && proteins && fat && carbohydrates &&
                         <Route path="/ingredients/:id">
                             <Modal
                                 isIngredientDetail={true}
@@ -119,6 +135,24 @@ function App() {
                             </Modal>
                         </Route>
                         }
+
+
+                        {isShowModal && background &&
+                            <Route path="/feed/:id" exact={true}>
+                                <Modal>
+                                    <BurgerСomposition currentOrder={currentOrder}/>
+                                </Modal>
+                            </Route>
+                        }
+
+                        {isShowModal && background &&
+                        <Route path="/profile/orders/:id" exact={true}>
+                            <Modal>
+                                <BurgerСomposition currentOrder={currentOrder}/>
+                            </Modal>
+                        </Route>
+                        }
+
 
                         <Switch>
                             <Route path="/" exact={true}>
@@ -150,19 +184,26 @@ function App() {
                                 <ResetPassword/>
                             </ProtectedAuthRoute>
 
-                            <ProtectedAuthRoute path="/profile" exact={true}>
+                            <ProtectedAuthRoute path="/profile">
                                 <Profile/>
                             </ProtectedAuthRoute>
 
-                            <ProtectedAuthRoute path="/profile/orders" exact={true}>
-                                <HistoryOrders />
-                            </ProtectedAuthRoute>
+                            <Route path="/feed" exact={true}>
+                                <OrderFeed />
+                            </Route>
 
                             {!isShowModal &&
                                 <Route path="/ingredients/:id" exact={true}>
                                     {renderNoModalIngredient}
                                 </Route>
                             }
+
+                            {!isShowModal &&
+                            <Route path="/feed/:id" exact={true}>
+                                {renderNoModalOrder}
+                            </Route>
+                            }
+
                         </Switch>
                 </>
                 }
@@ -170,7 +211,6 @@ function App() {
             }
         </>
     );
-};
-
+}
 export default App;
 

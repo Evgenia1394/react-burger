@@ -1,6 +1,6 @@
 import burgerStyles from "../burger-constructor/burger-constructor.module.css";
 import {ConstructorElement, DragIcon} from "@ya.praktikum/react-developer-burger-ui-components";
-import React, {LegacyRef, useRef} from "react";
+import React, {LegacyRef, SyntheticEvent, useRef} from "react";
 import {useDrag, useDrop} from "react-dnd";
 import {useDispatch, useSelector} from "react-redux";
 import {DECREASE_COUNT, SORT_INGREDIENT} from "../../services/actions/constructor-actions";
@@ -49,15 +49,11 @@ export const ConstructorIngredient = (props: IConstructorIngredient) => {
         </div>
         <div className={burgerStyles.product}>
             <ConstructorElement
-                // @ts-ignore
-                handleClose={(e: SyntheticEvent) => handleClose(props.ingredient._id)}
-                // @ts-ignore
-                type={props.ingredient.type}
+                handleClose={() => handleClose(props.ingredient._id)}
                 isLocked={props.ingredient.type === 'bun'}
                 text={props.ingredient.name}
                 price={props.ingredient.price}
                 thumbnail={props.ingredient.image}
-                draggable={true}
             />
         </div>
     </div>

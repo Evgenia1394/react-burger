@@ -1,23 +1,22 @@
-import {useState} from "react";
+import {ChangeEvent, FormEvent, useState} from "react";
 import {Button, EmailInput} from "@ya.praktikum/react-developer-burger-ui-components";
 import authStyles from "./auth.module.css";
 import {Link, Redirect, useHistory} from "react-router-dom";
 import {useDispatch} from "react-redux";
 import {postEmail} from "../services/actions/thunks";
 import getCookie from "../utils/get-cookie";
-import {SyntheticEvent} from "../types";
 
 export const ForgotPassword = () => {
     const history = useHistory()
     const [value, setValue] = useState<string>('');
 
-    const onChange = (e: SyntheticEvent) => {
+    const onChange = (e: ChangeEvent<HTMLInputElement>) => {
         setValue(e.target.value);
     }
 
     const dispatch = useDispatch()
 
-    const recovery = (e: SyntheticEvent) => {
+    const recovery = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
          // @ts-ignore
         dispatch(postEmail(value));
@@ -32,14 +31,13 @@ export const ForgotPassword = () => {
         <>
             <div className={authStyles.main}>
                 <form className={authStyles.form}
-                    // @ts-ignore
                       onSubmit={recovery}>
                     <p className="text text_type_main-medium">
                         Восстановление пароля
                     </p>
                     <div className={authStyles.input}>
                         <EmailInput
-                            // @ts-ignore
+
                             onChange={onChange} value={value} name={'email'}/>
                     </div>
                     <Button

@@ -1,4 +1,4 @@
-import {useRef, useState} from "react";
+import {ChangeEvent, FormEvent, useRef, useState} from "react";
 import {Button, EmailInput, Input, PasswordInput} from "@ya.praktikum/react-developer-burger-ui-components";
 import './styles.css';
 import authStyles from "./auth.module.css";
@@ -7,6 +7,7 @@ import {useDispatch} from "react-redux";
 import {registrationNew} from "../services/actions/thunks";
 import getCookie from "../utils/get-cookie";
 import {SyntheticEvent} from "../types";
+import {useMyDispatch} from "../services/store";
 
 export const Registration = () => {
     const [form, setValue] = useState<IRegistration>({
@@ -16,9 +17,9 @@ export const Registration = () => {
     });
     const history = useHistory();
 
-    const dispatch = useDispatch();
+    const dispatch = useMyDispatch();
 
-    const onChange = (e: SyntheticEvent) => {
+    const onChange = (e: ChangeEvent<HTMLInputElement>) => {
         const target = e.target;
         const value = target.value;
         const name = target.name;
@@ -33,10 +34,9 @@ export const Registration = () => {
         alert('Icon Click Callback')
     }
 
-    const registration = async (e: SyntheticEvent) => {
+    const registration = async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      // @ts-ignore
-        await dispatch(registrationNew(form.email, form.password, form.name));
+      await dispatch(registrationNew(form.email, form.password, form.name));
       await history.replace({pathname: '/'})
     }
 
@@ -48,7 +48,7 @@ export const Registration = () => {
         <>
             <div className={authStyles.main}>
                 <form className={authStyles.form}
-                    // @ts-ignore
+
                       onSubmit={registration}>
                     <p className="text text_type_main-medium">
                         Регистрация
@@ -56,7 +56,6 @@ export const Registration = () => {
                     <Input
                         type={'text'}
                         placeholder={'Имя'}
-                        // @ts-ignore
                         onChange={onChange}
                         icon={'CurrencyIcon'}
                         value={form.name}
@@ -69,11 +68,10 @@ export const Registration = () => {
                     />
                     <div className={authStyles.input}>
                         <EmailInput
-                            // @ts-ignore
                             onChange={onChange} value={form.email} name={'email'}/>
                     </div>
                     <PasswordInput
-                        // @ts-ignore
+
                         onChange={onChange} value={form.password} name={'password'} />
                     <Button
                         // @ts-ignore

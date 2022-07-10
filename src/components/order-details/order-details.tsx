@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import orderDetailsStyles from './order-details.module.css';
 import doneImage from '../../images/done.svg';
 import ErrorPage from "../error-page/error-page";

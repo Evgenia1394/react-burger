@@ -2,23 +2,23 @@ import React, {LegacyRef, useEffect, useRef, useState} from 'react';
 import {Tab} from "@ya.praktikum/react-developer-burger-ui-components";
 import burgerIngredientsStyles from './burger-ingredients.module.css';
 import IngredientCard from '../ingredient-card/ingredient-card';
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch} from "react-redux";
 import {OPEN_INGREDIENT} from "../../services/actions/ingredient-actions";
 import {OPEN_MODAL} from "../../services/actions/modal-actions";
 import {IBurgerItem} from "../../types";
+import {useMySelector} from "../../services/store";
 
 const BurgerIngredients = () => {
     const dispatch = useDispatch()
 
     const [current, setCurrent] = useState('Булки');
 
-    const {feedIngredientsRequest, feedIngredientsFailed, feedIngredients} =
-        // @ts-ignore
-        useSelector((state) => state.allIngredientsReducer);
+    const allIngredients = useMySelector((state) => state.allIngredientsReducer);
+    let feedIngredients = allIngredients.feedIngredients;
 
-    const buns = feedIngredients.data.filter((ingredient: IBurgerItem) => ingredient.type === 'bun');
-    const sauces = feedIngredients.data.filter((ingredient: IBurgerItem) => ingredient.type === 'sauce')
-    const mains = feedIngredients.data.filter((ingredient: IBurgerItem) => ingredient.type === 'main');
+    const buns = feedIngredients?.data?.filter((ingredient: IBurgerItem) => ingredient.type === 'bun');
+    const sauces = feedIngredients?.data?.filter((ingredient: IBurgerItem) => ingredient.type === 'sauce')
+    const mains = feedIngredients?.data?.filter((ingredient: IBurgerItem) => ingredient.type === 'main');
 
     const tabSauceRef = useRef<HTMLDivElement>();
     const tabBunRef = useRef<HTMLDivElement>();
@@ -28,11 +28,11 @@ const BurgerIngredients = () => {
     const scrollHandler = () => {
         if (!menuRef.current) return;
         const menuHeight = menuRef.current.getBoundingClientRect().top;
-        // @ts-ignore
+        if (!tabSauceRef.current) return;
         const sauceHeight = Math.abs(tabSauceRef.current.getBoundingClientRect().top - menuHeight)
-        // @ts-ignore
+        if (!tabBunRef.current) return;
         const bunHeight = Math.abs(tabBunRef.current.getBoundingClientRect().top - menuHeight)
-        // @ts-ignore
+        if (!tabMainRef.current) return;
         const mainHeight = Math.abs(tabMainRef.current.getBoundingClientRect().top - menuHeight)
         const minHeight = Math.min(sauceHeight, bunHeight, mainHeight)
 
@@ -53,7 +53,8 @@ const BurgerIngredients = () => {
     }, []);
 
     const handleOpenModal = (_id: string) => {
-        const currentProduct = feedIngredients.data.find((item: IBurgerItem) => item._id === _id);
+        const currentProduct = feedIngredients?.data?.find((item: IBurgerItem) => item._id === _id);
+
             dispatch({
                 type: OPEN_INGREDIENT,
                 payload: currentProduct
@@ -88,36 +89,42 @@ const BurgerIngredients = () => {
                         Булки
                     </h2>
                 </div>
-                <div  className={burgerIngredientsStyles.category}>
-                    {buns.map((burger: IBurgerItem) => (
-                        <div  key={burger._id} onClick={()=>handleOpenModal(burger._id)} >
-                            <IngredientCard data={burger} />
-                        </div>
+                {buns &&
+                    <div className={burgerIngredientsStyles.category}>
+                        {buns.map((burger: IBurgerItem) => (
+                            <div  key={burger._id} onClick={()=>handleOpenModal(burger._id)} >
+                                <IngredientCard data={burger} />
+                            </div>
 
-                    ))}
+                        ))}
                 </div>
+                }
                 <h2 ref={tabSauceRef as LegacyRef<HTMLDivElement> | undefined} className="text text_type_main-medium"
                     id="sauce"
                 >Соусы
                 </h2>
-                <div className={burgerIngredientsStyles.category}>
+                {sauces &&
+                    <div className={burgerIngredientsStyles.category}>
                     {sauces.map((burger: IBurgerItem) => (
                         <div key={burger._id} onClick={()=>handleOpenModal(burger._id)} >
                             <IngredientCard  data={burger} />
                         </div>
                     ))}
                 </div>
+                }
                 <h2 ref={tabMainRef as LegacyRef<HTMLDivElement> | undefined} className="text text_type_main-medium"
                     id="main">
                     Начинки
                 </h2>
-                <div className={burgerIngredientsStyles.category}>
+                {mains &&
+                    <div className={burgerIngredientsStyles.category}>
                     {mains.map((burger: IBurgerItem) => (
                         <div  key={burger._id} onClick={()=>handleOpenModal(burger._id)} >
                             <IngredientCard data={burger} />
                         </div>
                     ))}
                 </div>
+                }
             </div>
         </div>
     )

@@ -5,12 +5,13 @@ import {useDrag} from "react-dnd";
 import {useSelector} from "react-redux";
 import {Link} from "react-router-dom";
 import {IBurgerItem} from "../../types";
+import {useMySelector} from "../../services/store";
 
 const IngredientCard = (props: IIngredientCard) => {
     const {data} = props;
-    const {image, name, calories, proteins, fat, carbohydrates, price, _id, type} = props.data;
-    // @ts-ignore
-    const {constructorIngredient} = useSelector((state) => state.draggableConstructorReducer);
+    const {image, name, price, _id, type} = props.data;
+
+    const {constructorIngredient} = useMySelector((state) => state.draggableConstructorReducer);
 
     const count = constructorIngredient.filter((ingredient: IBurgerItem) => (ingredient._id === _id))
             .filter((ingredient: IBurgerItem) => ingredient.type !== 'bun')[0] ?

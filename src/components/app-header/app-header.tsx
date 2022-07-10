@@ -23,7 +23,7 @@ const AppHeader = () => {
                         </NavLink>
 
                         <NavLink
-                            to={'history/order'}
+                            to={'/feed'}
                             activeStyle={{color: '#F2F2F3'}}
                             className={headerStyles.item}>
                             <div className={headerStyles.icon}>

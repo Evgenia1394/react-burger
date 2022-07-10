@@ -1,12 +1,13 @@
 import './styles.css';
 import {Link, useHistory, useLocation} from 'react-router-dom';
-import {useRef, useState} from "react";
+import {ChangeEvent, FormEvent, FormEventHandler, useRef, useState} from "react";
 import {Button, Input, PasswordInput} from "@ya.praktikum/react-developer-burger-ui-components";
 import authStyles from "./auth.module.css";
 import {useDispatch} from "react-redux";
 import {resetPassword} from "../services/actions/thunks";
 import getCookie from "../utils/get-cookie";
 import {SyntheticEvent} from "../types";
+import {useMyDispatch} from "../services/store";
 
 export const ResetPassword = () => {
     const [form, setValue] = useState<IPassword>({
@@ -14,11 +15,11 @@ export const ResetPassword = () => {
         code: ''
     });
 
-    const dispatch = useDispatch();
+    const dispatch = useMyDispatch();
     const history = useHistory();
     const { state: stateLocation }: {state: {from: string}} = useLocation();
 
-    const onChange = (e: SyntheticEvent) => {
+    const onChange = (e: ChangeEvent<HTMLInputElement>) => {
         const target = e.target;
         const value = target.value;
         const name = target.name;
@@ -34,9 +35,8 @@ export const ResetPassword = () => {
         alert('Icon Click Callback')
     }
 
-    const resetRequest = (e: SyntheticEvent) => {
+    const resetRequest = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        // @ts-ignore
         dispatch(resetPassword(form.password, form.code));
     }
 
@@ -48,23 +48,20 @@ export const ResetPassword = () => {
         history.replace({pathname: '/'})
     }
 
-
     return (
         <>
             <div className={authStyles.main}>
                 <form className={authStyles.form}
-                    // @ts-ignore
                       onSubmit={resetRequest}>
                     <p className="text text_type_main-medium">
                         Восстановление пароля
                     </p>
                     <PasswordInput
-                        // @ts-ignore
+
                         onChange={onChange} value={form.password} name={'password'} />
                     <Input
                         type={'text'}
                         placeholder={'Введите код из письма'}
-                        // @ts-ignore
                         onChange={onChange}
                         icon={'CurrencyIcon'}
                         value={form.code}

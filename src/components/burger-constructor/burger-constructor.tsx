@@ -7,7 +7,6 @@ import {
 import burgerStyles from './burger-constructor.module.css';
 import OrderDetails from "../order-details/order-details";
 import Modal from "../modal/modal";
-import {useDispatch, useSelector} from "react-redux";
 import {useDrop} from "react-dnd";
 
 import {postOrder} from "../../services/actions/thunks";
@@ -15,26 +14,27 @@ import {uuidv4} from "../../utils/uuidv4";
 import {ConstructorIngredient} from "../constructor-ingredient/constructor-ingredient";
 import getCookie from "../../utils/get-cookie";
 import {useHistory} from "react-router-dom";
-import {CLOSE_MODAL, OPEN_MODAL} from "../../services/actions/modal-actions";
-import {CLEAR_ORDER} from "../../services/actions/order-actions";
-import {CLEAR_INGREDIENT} from "../../services/actions/ingredient-actions";
+import { modalActions } from "../../services/actions/modal-actions";
+import { orderActions} from "../../services/actions/order-actions";
+import { ingredientActions} from "../../services/actions/ingredient-actions";
 import {IBurgerItem} from "../../types";
+import {useMyDispatch, useMySelector} from "../../services/store";
 
 const BurgerConstructor = (props: IBurgerConstructorProps) => {
     const {onDropHandler} = props;
     const [visible, setVisible] = useState<React.SetStateAction<boolean>>(false);
-    // @ts-ignore
-    const {constructorIngredient} = useSelector((state) => state.draggableConstructorReducer);
-    // @ts-ignore
-    const {postOrderRequest, postOrderFailed, postOrderFeed} = useSelector((state) => state.orderReducer);
-    // @ts-ignore
-    const {isShowModal} = useSelector((state) => state.modalReducer);
+
+    const {constructorIngredient} = useMySelector((state) => state.draggableConstructorReducer);
+
+    const {postOrderFeed} = useMySelector((state) => state.orderReducer);
+
+    const {isShowModal} = useMySelector((state) => state.modalReducer);
 
     const [loading, setLoading] = useState(true);
 
-    const notBun = constructorIngredient.filter((ingredient: IBurgerItem) => (ingredient.type !== 'bun' && ingredient.count && ingredient.count > 0))
-    const bun = constructorIngredient.find((ingredient: IBurgerItem) => (ingredient.type === 'bun'));
-    const dispatch = useDispatch();
+    const notBun = constructorIngredient?.filter((ingredient: IBurgerItem) => (ingredient.type !== 'bun' && ingredient.count && ingredient.count > 0))
+    const bun = constructorIngredient?.find((ingredient: IBurgerItem) => (ingredient.type === 'bun'));
+    const dispatch = useMyDispatch();
     const history = useHistory();
 
     useEffect(() => {
@@ -46,21 +46,29 @@ const BurgerConstructor = (props: IBurgerConstructorProps) => {
 
     const [, dropTarget] = useDrop({
         accept: 'ingredients',
-        drop(itemId) {
-        // @ts-ignore
+        drop(itemId: IBurgerItem) {
+
             onDropHandler(itemId);
         }
     })
 
     let priceIngredients = 0;
-    for (let value of notBun) {
-        priceIngredients += value.price * value.count;
+
+    if (notBun != undefined) {
+        for (let value of notBun) {
+            if (value && value !== undefined) {
+            priceIngredients += value.price * value.count!;
+            }
+        }
+    } else {
+        priceIngredients = 0;
     }
+
     const totalPrice = (bun ? bun.price : 0) * 2 + (notBun.length ? priceIngredients : 0);
 
     const dataOrder = () => {
         setLoading(true)
-        let arrId = [bun._id];
+        let arrId = [bun?._id];
         for (let value of notBun) {
             arrId.push(value._id)
         }
@@ -68,25 +76,25 @@ const BurgerConstructor = (props: IBurgerConstructorProps) => {
         if (getCookie('token') === undefined) {
             return history.push("/login", { from: '/' })
         }
-        // @ts-ignore
+
         return dispatch(postOrder(arrId));
     }
 
     const handleOpenModal = () => {
          dataOrder();
-         dispatch({type: OPEN_MODAL})
+         dispatch({type: modalActions.OPEN_MODAL})
          setVisible(true);
     }
 
     const handleCloseModal = () => {
         dispatch({
-            type: CLEAR_ORDER
+            type: orderActions.CLEAR_ORDER
         })
         dispatch({
-            type: CLEAR_INGREDIENT
+            type: ingredientActions.CLEAR_INGREDIENT
         })
         dispatch({
-            type: CLOSE_MODAL
+            type: modalActions.CLOSE_MODAL
         })
         history.replace('/')
     }
@@ -106,8 +114,8 @@ const BurgerConstructor = (props: IBurgerConstructorProps) => {
                     }
                 </div>
                 <div className={burgerStyles.wrapper} ref={dropTarget}>
-                    {notBun.length ?
-                        notBun.map((ingredient: IBurgerItem, id: string) => {
+                    {notBun && notBun.length ?
+                        notBun.map((ingredient: IBurgerItem, id: number) => {
                             if (ingredient.count && ingredient.count > 1) {
                                 let array = []
                                 let count = ingredient.count
@@ -153,11 +161,11 @@ const BurgerConstructor = (props: IBurgerConstructorProps) => {
                 <Button type="primary" size="medium" onClick={handleOpenModal}>
                     Оформить заказ
                 </Button>
-                {visible && !loading && isShowModal &&
+                {visible && !loading && isShowModal && postOrderFeed.order &&
                 <Modal
                     handleCloseModal={handleCloseModal}
                 >
-                    <OrderDetails orderNumber={postOrderFeed?.order?.number}/>
+                    <OrderDetails orderNumber={postOrderFeed?.order.number}/>
                 </Modal>
                 }
             </div>

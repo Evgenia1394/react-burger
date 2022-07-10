@@ -4,15 +4,15 @@ import LoadingPage from "./loading-page/loading-page";
 import {useEffect} from "react";
 import {userInfo} from "../services/actions/thunks";
 import getCookie from "../utils/get-cookie";
+import {useMyDispatch, useMySelector} from "../services/store";
 
 function ProtectedAuthRoute ({onlyUnAuth = false, ...rest}: RouteProps & {onlyUnAuth?: boolean}) {
 
-    // @ts-ignore
-    const isAuthChecked = useSelector((state) => state.userInfoReducer.isAuthChecked);
-    // @ts-ignore
-    const user = useSelector((state) => state.userInfoReducer.feedUserInfo);
+    const isAuthChecked = useMySelector((state) => state.userInfoReducer.isAuthChecked);
+
+    const user = useMySelector((state) => state.userInfoReducer.feedUserInfo);
     const location = useLocation<{ from: { pathname: string }}>();
-    const dispatch = useDispatch();
+    const dispatch = useMyDispatch();
     const accessToken = getCookie('accessToken');
 
     useEffect(() => {
@@ -24,12 +24,12 @@ function ProtectedAuthRoute ({onlyUnAuth = false, ...rest}: RouteProps & {onlyUn
         return <LoadingPage />;
     }
 
-    if (onlyUnAuth && user) {
+    if (onlyUnAuth && user.success === true) {
         const { from } = location.state || { from: { pathname: '/' } };
         return <Redirect to={from} />;
     }
 
-    if (!onlyUnAuth && !user) {
+    if (!onlyUnAuth && user.success === false) {
         return (
             <Redirect
                 to={{

@@ -1,11 +1,12 @@
 import {Button, EmailInput, PasswordInput} from "@ya.praktikum/react-developer-burger-ui-components";
-import {useState} from "react";
+import {ChangeEvent, FormEvent, useState} from "react";
 import authStyles from './auth.module.css'
 import './styles.css';
 import {Link, useHistory, useLocation} from 'react-router-dom';
 import {useDispatch} from "react-redux";
 import {logIn} from "../services/actions/thunks";
 import {IForm, SyntheticEvent} from "../types";
+import {useMyDispatch} from "../services/store";
 
 
 export const Login = () => {
@@ -15,10 +16,10 @@ export const Login = () => {
     });
 
     const history = useHistory();
-    const dispatch = useDispatch();
+    const dispatch = useMyDispatch();
     const { state }: {state: {from: string}} = useLocation();
 
-    const onChange = (e: SyntheticEvent) => {
+    const onChange = (e: ChangeEvent<HTMLInputElement>) => {
         const target = e.target;
         const value = target.value;
         const name = target.name;
@@ -28,7 +29,7 @@ export const Login = () => {
         });
     }
 
-    const signIn = (e: SyntheticEvent) => {
+    const signIn = (e: FormEvent<HTMLFormElement>) => {
 
         e.preventDefault();
         // @ts-ignore
@@ -44,7 +45,6 @@ export const Login = () => {
             <>
                 <div className={authStyles.main}>
                     <form className={authStyles.form}
-                        // @ts-ignore
                           onSubmit={signIn}>
                         <p className="text text_type_main-medium">
                             Вход

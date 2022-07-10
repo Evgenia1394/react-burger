@@ -1,0 +1,167 @@
+.content {
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
+    height: 600px;
+    width: 600px;
+}
+.content::-webkit-scrollbar {
+    width: 8px;
+    background-color: #2F2F37;
+}
+
+.content::-webkit-scrollbar-thumb {
+    background-color: #8585AD;
+    height: 200px;
+}
+
+.allCardOrders {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+    gap: 24px;
+}
+
+a {
+    text-decoration: none;
+}
+a:visited {
+    text-decoration: #ffffff;
+}
+
+.title {
+    margin-top: 40px;
+}
+.wrapperTab {
+    display: flex;
+}
+
+.card {
+    width: 90%;
+    height: 214px;
+    background: #1C1C21;
+    border-radius: 40px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    margin-bottom: 16px;
+}
+
+.cardContent {
+    display: flex;
+    justify-content: space-between;
+}
+
+.cardSum {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.readinessContent {
+    display: flex;
+    flex-direction: column;
+    gap: 60px;
+}
+
+.status {
+    display: flex;
+    gap: 15px;
+    justify-content: space-between;
+}
+
+.statusTitle {
+    margin-bottom: 24px;
+}
+
+.readyNumbers {
+    font-family: 'Iceland';
+    font-weight: normal;
+    font-size: 28px;
+    color: #00CCCC;
+    margin: 0 0 8px 0;
+}
+
+.workNumbers {
+    font-family: 'Iceland';
+    font-weight: normal;
+    font-size: 28px;
+    color: #ffffff;
+    margin: 0 0 8px 0;
+}
+
+.ordersAmount {
+    font-family: 'Iceland';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 144px;
+    line-height: 120px;
+    text-shadow: 0px 0px 16px rgba(51, 51, 255, 0.25), 0px 0px 8px rgba(51, 51, 255, 0.25), 0px 4px 32px rgba(51, 51, 255, 0.5);
+    margin-bottom: 0;
+    margin-top: 0;
+}
+
+.statusColumn {
+    width: 100%;
+}
+
+.numbersContainer {
+    display: flex;
+    max-height: 350px;
+    flex-wrap: wrap;
+    flex-direction: column;
+}
+
+.orderImages {
+    display: flex;
+    z-index: 1;
+    position: relative;
+    left: 0px
+}
+
+.orderImagesBackground > img {
+    height: 64px;
+    text-align: center;
+}
+
+.orderImagesBackground {
+    border: 0.1875em solid #0F1C3F;
+    height: 64px;
+    width: 64px;
+    z-index: 0;
+    border-radius: 50%;
+    background-color: #1C1C21;
+    display: flex;
+    justify-content: center;
+    position: absolute;
+}
+
+.hiddenIngredients {
+    position: absolute;
+    height: 64px;
+    width: 64px;
+    z-index: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.contentHistory {
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
+    height: 600px;
+    width: 800px;
+}
+
+.contentHistory::-webkit-scrollbar {
+    width: 8px;
+    background-color: #2F2F37;
+}
+
+.contentHistory::-webkit-scrollbar-thumb {
+    background-color: #8585AD;
+    height: 200px;
+}

@@ -1,28 +1,42 @@
-import {useRef, useState} from "react";
-import {useDispatch, useSelector} from "react-redux";
+import React, {ChangeEvent, FormEvent, useRef, useState} from "react";
 import authStyles from "./auth.module.css";
 import {Button, Input} from "@ya.praktikum/react-developer-burger-ui-components";
-import {NavLink, useHistory} from "react-router-dom";
+import {NavLink, Route, Switch, useHistory, useLocation} from "react-router-dom";
 import {editUserInfo, logOut} from "../services/actions/thunks";
 import getCookie from "../utils/get-cookie";
-import {CLEAR_USER} from "../services/actions/user-info-actions";
-import {NOT_LOGGED} from "../services/actions/isLogged-actions";
-import {IForm, SyntheticEvent} from "../types";
+import {userActions} from "../services/actions/user-info-actions";
+import {isLoggedActions} from "../services/actions/isLogged-actions";
+import {IUserForm} from "../types";
+
+import {useMyDispatch, useMySelector} from "../services/store";
+import ProtectedAuthRoute from "../components/protected-auth-route";
+import {HistoryOrders} from "./history-orders";
+import {BurgerСomposition} from "../components/feed/burger-composition";
+import Modal from "../components/modal/modal";
 
 export const Profile = () => {
-    // @ts-ignore
-    let {feedUserInfoRequest, feedUserInfoFailed, feedUserInfo} = useSelector(state => state.userInfoReducer);
-    const [form, setForm] = useState<IForm>({
-        name: feedUserInfo.user.name,
-        email: feedUserInfo.user.email,
+
+    let feedUserInfo = useMySelector(state => state.userInfoReducer.feedUserInfo);
+    const {isShowModal} = useMySelector((state) => state.modalReducer);
+    let currentOrder = useMySelector(state => state.oneOrderReducer.oneOrder);
+
+    let name = feedUserInfo.user.name;
+    let email = feedUserInfo.user.email;
+
+    const [form, setForm] = useState<IUserForm>({
+        name: name,
+        email: email,
         password: ""
     });
 
-    const [prevform, setPrevForm] = useState<IForm>(form);
-    const dispatch = useDispatch();
+    const [prevform, setPrevForm] = useState<IUserForm>(form);
+    const dispatch = useMyDispatch();
     const history = useHistory();
 
-    const onChange = (e: SyntheticEvent) => {
+    const location = useLocation<{background: Location | undefined}>();
+    const background = location.state && location.state.background;
+
+    const onChange = (e: ChangeEvent<HTMLInputElement>) => {
         const target = e.target;
         const value = target.value;
         const name = target.name;
@@ -39,25 +53,25 @@ export const Profile = () => {
     }
 
     const signOut = async () => {
-        // @ts-ignore
+
         await dispatch(logOut(getCookie('token')));
         if (!getCookie('token')) {
-            await dispatch({type: NOT_LOGGED})
+            await dispatch({type: isLoggedActions.NOT_LOGGED})
         }
-        await dispatch({type: CLEAR_USER});
+        await dispatch({type: userActions.CLEAR_USER});
         await history.replace({pathname: '/login'})
     }
 
-    const editUser = (e: SyntheticEvent) => {
+    const editUser = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const changedFields: IForm = {}
+        const changedFields: IUserForm = {}
         for (let field in form) {
             if (form[field]) {
                 changedFields[field] = form[field]
             }
         }
 
-        let validatedFields: IForm = {};
+        let validatedFields: IUserForm = {};
 
         for (let val in changedFields) {
             if (changedFields[val] !== prevform[val]) {
@@ -68,7 +82,6 @@ export const Profile = () => {
         if (Object.keys(validatedFields).length == 0) {
             return;
         } else {
-            // @ts-ignore
             dispatch(editUserInfo(getCookie('accessToken'), validatedFields));
             setPrevForm(validatedFields);
         }
@@ -78,19 +91,27 @@ export const Profile = () => {
 
     const resetForm = () => {
         setForm({
-            name: feedUserInfo.user.name,
-            email: feedUserInfo.user.email,
+            name: name,
+            email: email,
             password: ""
         });
     }
 
-    // @ts-ignore
+
+    const renderNoModalHistoryOrder = () => {
+        return (
+            <>
+                <BurgerСomposition single={true}/>
+            </>
+        )
+    };
+
     return (
         <>
             <div className={authStyles.mainProfile}>
                 <div className={authStyles.actions}>
                     <div className={authStyles.action}>
-                        <NavLink to={'profile'}
+                        <NavLink to={'/profile/form'}
                                  activeStyle={{color: '#F2F2F3'}}
                                  className={authStyles.inactiveAction}>
                             <p className="text text_type_main-medium">
@@ -99,7 +120,7 @@ export const Profile = () => {
                         </NavLink>
                     </div>
                     <div className={authStyles.action}>
-                        <NavLink to={'profile/orders'}
+                        <NavLink to={'/profile/orders'}
                                  activeStyle={{color: '#F2F2F3'}}
                                  className={authStyles.inactiveAction}>
                             <p className="text text_type_main-medium">
@@ -121,69 +142,80 @@ export const Profile = () => {
                     </p>
                 </div>
 
-                <form className={authStyles.formProfile}
-                    // @ts-ignore
-                      onSubmit={editUser}>
-                    <Input
-                        type={'text'}
-                        placeholder={'Имя'}
-                        // @ts-ignore
-                        onChange={onChange}
-                        icon={'EditIcon'}
-                        // @ts-ignore
-                        value={form.name}
-                        name={'name'}
-                        error={false}
-                        ref={inputRef}
-                        onIconClick={onIconClick}
-                        errorText={'Ошибка'}
-                        size={'default'}
-                    />
-                    <Input
-                        type={'email'}
-                        placeholder={'Логин'}
-                        // @ts-ignore
-                        onChange={onChange}
-                        icon={'EditIcon'}
-                        // @ts-ignore
-                        value={form.email}
-                        name={'email'}
-                        error={false}
-                        ref={inputRef}
-                        onIconClick={onIconClick}
-                        errorText={'Ошибка'}
-                        size={'default'}
-                    />
-                    <Input
-                        type={'text'}
-                        placeholder={'Пароль'}
-                        // @ts-ignore
-                        onChange={onChange}
-                        icon={'EditIcon'}
-                        // @ts-ignore
-                        value={form.password}
-                        name={'password'}
-                        error={false}
-                        ref={inputRef}
-                        onIconClick={onIconClick}
-                        errorText={'Ошибка'}
-                        size={'default'}
-                        // @ts-ignore
-                        type={'password'}
-                    />
-                    <div className={authStyles.buttons}>
-                        <Button type="primary" size="medium" onClick={resetForm}>
-                            Отмена
-                        </Button>
-                        <Button
+                <Switch>
+                    <Route path='/profile/form'>
+                        <form className={authStyles.formProfile}
+                          onSubmit={editUser}>
+                        <Input
+                            type={'text'}
+                            placeholder={'Имя'}
+                            onChange={onChange}
+                            icon={'EditIcon'}
                             // @ts-ignore
-                            type="submit" size="large">
-                            Сохранить
-                        </Button>
-                    </div>
-                </form>
+                            value={form.name}
+                            name={'name'}
+                            error={false}
+                            ref={inputRef}
+                            onIconClick={onIconClick}
+                            errorText={'Ошибка'}
+                            size={'default'}
+                        />
+                        <Input
+                            type={'email'}
+                            placeholder={'Логин'}
+                            onChange={onChange}
+                            icon={'EditIcon'}
+                            // @ts-ignore
+                            value={form.email}
+                            name={'email'}
+                            error={false}
+                            ref={inputRef}
+                            onIconClick={onIconClick}
+                            errorText={'Ошибка'}
+                            size={'default'}
+                        />
+                        <Input
+                            type={"password"}
+                            placeholder={'Пароль'}
+                            onChange={onChange}
+                            icon={'EditIcon'}
+                            // @ts-ignore
+                            value={form.password}
+                            name={'password'}
+                            error={false}
+                            ref={inputRef}
+                            onIconClick={onIconClick}
+                            errorText={'Ошибка'}
+                            size={'default'}
+                        />
+                        <div className={authStyles.buttons}>
+                            <Button type="secondary" size="medium" onClick={resetForm}>
+                                Отмена
+                            </Button>
+                            <Button
+                                // @ts-ignore
+                                type="submit" size="large">
+                                Сохранить
+                            </Button>
+                        </div>
+                    </form>
+                    </Route>
+
+                    <ProtectedAuthRoute path='/profile/orders' exact={true}>
+                        <HistoryOrders />
+                    </ProtectedAuthRoute>
+
+                    {!isShowModal &&
+                    <Route path="/profile/orders/:id" >
+                        {renderNoModalHistoryOrder}
+                    </Route>
+                    }
+
+                </Switch>
+
             </div>
         </>
     )
 }
+
 
