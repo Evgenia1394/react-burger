@@ -1,19 +1,17 @@
 import {CLEAR_ORDER, GET_ORDER_FAILED, GET_ORDER_SUCCESS, POST_ORDER, TOrderActions} from "../actions/order-actions";
 
 export type TOrderState = {
-    // orderReducer: {
         postOrderRequest: boolean,
         postOrderFailed: boolean,
         postOrderFeed: {success: boolean, order: {number: string} },
-    // }
+
 };
 
 export const defaultOrderState = {
-    // orderReducer: {
         postOrderRequest: false,
         postOrderFailed: false,
         postOrderFeed: {success: false, order: {number: ''} },
-    // }
+
 };
 
 export const orderReducer = (state: TOrderState = defaultOrderState, action: TOrderActions): TOrderState => {

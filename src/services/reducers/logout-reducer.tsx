@@ -1,4 +1,4 @@
-import {LOGOUT_FAILED, LOGOUT_SUCCESS, POST_LOGOUT, TLogoutActions} from "../actions/logout-actions";
+import {LOGOUT_FAILED, LOGOUT_SUCCESS, logoutActions, POST_LOGOUT, TLogoutActions} from "../actions/logout-actions";
 import deleteCookie from "../../utils/delete-cookie";
 
 export type TLogoutState = {
@@ -15,14 +15,14 @@ export const defaultLogoutState = {
 
 export const logoutReducer = (state: TLogoutState = defaultLogoutState, action: TLogoutActions): TLogoutState => {
     switch (action.type) {
-        case POST_LOGOUT: {
+        case logoutActions.POST_LOGOUT: {
             return {
                 ...state,
                 feedLogoutRequest: true,
                 feedLogoutFailed: false,
             };
         }
-        case LOGOUT_SUCCESS: {
+        case logoutActions.LOGOUT_SUCCESS: {
             deleteCookie('token');
             deleteCookie('accessToken');
             return {
@@ -31,7 +31,7 @@ export const logoutReducer = (state: TLogoutState = defaultLogoutState, action: 
                 feedLogoutRequest: false
             };
         }
-        case LOGOUT_FAILED: {
+        case logoutActions.LOGOUT_FAILED: {
             return {
                 ...state,
                 feedLogoutFailed: true,

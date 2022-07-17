@@ -1,8 +1,4 @@
-import {
-    CLEAR_INGREDIENT, ingredientActions,
-    OPEN_INGREDIENT,
-    TIngredientActions
-} from "../actions/ingredient-actions";
+import {ingredientActions, TIngredientActions} from "../actions/ingredient-actions";
 import {IBurgerItem} from "../../types";
 
 export type TIngredientDetailsState = {

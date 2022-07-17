@@ -1,6 +1,4 @@
-import {Feed} from "../components/feed/feed";
 import {useMyDispatch, useMySelector} from "../services/store";
-import {useDispatch} from "react-redux";
 import React, {useEffect} from "react";
 import {WS_CONNECTION_CLOSED, WS_CONNECTION_START} from "../services/actions/socket-actions";
 import getCookie from "../utils/get-cookie";
@@ -9,6 +7,7 @@ import {TOrderProps} from "../types";
 import {FeedCard} from "../components/feed/feed-card";
 import {getOneOrder} from "../services/actions/thunks";
 import {modalActions} from "../services/actions/modal-actions";
+import {baseWsUrl} from "../utils/burger-api";
 
 export const HistoryOrders = () => {
 
@@ -21,7 +20,7 @@ export const HistoryOrders = () => {
     const accessToken = getCookie('accessToken')?.split(' ')[1];
 
     useEffect(() => {
-        dispatch({type: WS_CONNECTION_START, wsUrl: `wss://norma.nomoreparties.space/orders?token=${accessToken}`})
+        dispatch({type: WS_CONNECTION_START, wsUrl: `${baseWsUrl}?token=${accessToken}`})
         return () => {
             dispatch({type: WS_CONNECTION_CLOSED})
         }

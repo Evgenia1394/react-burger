@@ -2,9 +2,9 @@ import {ChangeEvent, FormEvent, useState} from "react";
 import {Button, EmailInput} from "@ya.praktikum/react-developer-burger-ui-components";
 import authStyles from "./auth.module.css";
 import {Link, Redirect, useHistory} from "react-router-dom";
-import {useDispatch} from "react-redux";
 import {postEmail} from "../services/actions/thunks";
 import getCookie from "../utils/get-cookie";
+import {useMyDispatch} from "../services/store";
 
 export const ForgotPassword = () => {
     const history = useHistory()
@@ -14,11 +14,10 @@ export const ForgotPassword = () => {
         setValue(e.target.value);
     }
 
-    const dispatch = useDispatch()
+    const dispatch = useMyDispatch()
 
     const recovery = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-         // @ts-ignore
         dispatch(postEmail(value));
         return history.push("/reset-password", { from: '/forgot-password' })
     }

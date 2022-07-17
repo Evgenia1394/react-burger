@@ -1,12 +1,10 @@
 import './styles.css';
 import {Link, useHistory, useLocation} from 'react-router-dom';
-import {ChangeEvent, FormEvent, FormEventHandler, useRef, useState} from "react";
+import {ChangeEvent, FormEvent, useRef, useState} from "react";
 import {Button, Input, PasswordInput} from "@ya.praktikum/react-developer-burger-ui-components";
 import authStyles from "./auth.module.css";
-import {useDispatch} from "react-redux";
 import {resetPassword} from "../services/actions/thunks";
 import getCookie from "../utils/get-cookie";
-import {SyntheticEvent} from "../types";
 import {useMyDispatch} from "../services/store";
 
 export const ResetPassword = () => {

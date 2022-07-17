@@ -3,10 +3,8 @@ import {Button, EmailInput, Input, PasswordInput} from "@ya.praktikum/react-deve
 import './styles.css';
 import authStyles from "./auth.module.css";
 import {Link, useHistory} from "react-router-dom";
-import {useDispatch} from "react-redux";
 import {registrationNew} from "../services/actions/thunks";
 import getCookie from "../utils/get-cookie";
-import {SyntheticEvent} from "../types";
 import {useMyDispatch} from "../services/store";
 
 export const Registration = () => {

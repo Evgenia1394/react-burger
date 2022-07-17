@@ -2,7 +2,6 @@ import React from 'react';
 import ingredientCardStyles from './ingredient-card.module.css';
 import {Counter, CurrencyIcon} from "@ya.praktikum/react-developer-burger-ui-components";
 import {useDrag} from "react-dnd";
-import {useSelector} from "react-redux";
 import {Link} from "react-router-dom";
 import {IBurgerItem} from "../../types";
 import {useMySelector} from "../../services/store";

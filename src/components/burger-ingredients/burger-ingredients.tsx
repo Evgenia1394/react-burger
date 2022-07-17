@@ -2,14 +2,13 @@ import React, {LegacyRef, useEffect, useRef, useState} from 'react';
 import {Tab} from "@ya.praktikum/react-developer-burger-ui-components";
 import burgerIngredientsStyles from './burger-ingredients.module.css';
 import IngredientCard from '../ingredient-card/ingredient-card';
-import {useDispatch} from "react-redux";
-import {OPEN_INGREDIENT} from "../../services/actions/ingredient-actions";
-import {OPEN_MODAL} from "../../services/actions/modal-actions";
+import {ingredientActions, OPEN_INGREDIENT} from "../../services/actions/ingredient-actions";
+import {modalActions, OPEN_MODAL} from "../../services/actions/modal-actions";
 import {IBurgerItem} from "../../types";
-import {useMySelector} from "../../services/store";
+import {useMyDispatch, useMySelector} from "../../services/store";
 
 const BurgerIngredients = () => {
-    const dispatch = useDispatch()
+    const dispatch = useMyDispatch()
 
     const [current, setCurrent] = useState('Булки');
 
@@ -55,12 +54,13 @@ const BurgerIngredients = () => {
     const handleOpenModal = (_id: string) => {
         const currentProduct = feedIngredients?.data?.find((item: IBurgerItem) => item._id === _id);
 
-            dispatch({
-                type: OPEN_INGREDIENT,
+            // @ts-ignore
+        dispatch({
+                type: ingredientActions.OPEN_INGREDIENT,
                 payload: currentProduct
             })
             dispatch({
-                type: OPEN_MODAL,
+                type: modalActions.OPEN_MODAL,
             });
         }
     return (

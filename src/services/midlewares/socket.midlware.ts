@@ -1,17 +1,12 @@
-import {Middleware} from "redux";
-import {ActionCreatorWithoutPayload, ActionCreatorWithPayload} from "@reduxjs/toolkit";
-import {IwsConnectionInit, TwsOrderActions, WS_CONNECTION_START} from "../actions/socket-actions";
-
-
-interface IAppActions {
-    [key: string]: ActionCreatorWithPayload<any, string> | ActionCreatorWithoutPayload<string>
-}
+import {Middleware, MiddlewareAPI} from "redux";
+import {WS_CONNECTION_START, wsInit} from "../actions/socket-actions";
+import {RootState, TDispatch} from "../store";
 
 export const socketMiddleware = (wsActions: any): Middleware  => {
-    return (store: any) => {
+    return (store: MiddlewareAPI<TDispatch, RootState>) => {
         let socket: WebSocket | null = null;
 
-        return (next: any) => (action: any) => {
+        return (next) => (action) => {
             const { dispatch } = store;
             const { type, wsUrl, payload } = action;
 
@@ -20,7 +15,8 @@ export const socketMiddleware = (wsActions: any): Middleware  => {
                 wsConnectionError,
                 wsConnectionClosed,
                 wsGetMessage,
-                wsSendMessage
+                wsSendMessage,
+                wsInit
             } = wsActions;
 
             if (type === WS_CONNECTION_START) {
@@ -28,22 +24,22 @@ export const socketMiddleware = (wsActions: any): Middleware  => {
             }
 
             if (socket) {
-                socket.onopen = (event: any) => {
+                socket.onopen = (event) => {
                     dispatch(wsConnectionSuccess(event));
                 };
 
-                socket.onerror = (event: any)  => {
+                socket.onerror = (event)  => {
                     dispatch(wsConnectionError(event));
                 };
 
-                socket.onmessage = (event: any)  => {
+                socket.onmessage = (event)  => {
                     const { data } = event;
                     const parsedData = JSON.parse(data);
                     const { success, ...restParsedData } = parsedData;
                     dispatch(wsGetMessage(restParsedData));
                 };
 
-                socket.onclose = (event: any)  => {
+                socket.onclose = (event)  => {
                     dispatch(wsConnectionClosed(event));
                 };
 

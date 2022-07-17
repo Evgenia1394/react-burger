@@ -1,16 +1,16 @@
 import burgerStyles from "../burger-constructor/burger-constructor.module.css";
 import {ConstructorElement, DragIcon} from "@ya.praktikum/react-developer-burger-ui-components";
-import React, {LegacyRef, SyntheticEvent, useRef} from "react";
+import React, {LegacyRef, useRef} from "react";
 import {useDrag, useDrop} from "react-dnd";
-import {useDispatch, useSelector} from "react-redux";
-import {DECREASE_COUNT, SORT_INGREDIENT} from "../../services/actions/constructor-actions";
+import {constructorActions} from "../../services/actions/constructor-actions";
 import {IBurgerItem} from "../../types";
+import {useMyDispatch} from "../../services/store";
 
 export const ConstructorIngredient = (props: IConstructorIngredient) => {
 
     const ref = useRef(null);
     const item = props.ingredient;
-    const dispatch = useDispatch();
+    const dispatch = useMyDispatch();
 
     const [, dragRef] = useDrag({
         type: "constructor",
@@ -19,9 +19,9 @@ export const ConstructorIngredient = (props: IConstructorIngredient) => {
 
     const [, dropTarget] = useDrop({
         accept: "constructor",
-        drop(dropItem) {
+        drop(dropItem: IBurgerItem) {
             dispatch({
-                type: SORT_INGREDIENT,
+                type: constructorActions.SORT_INGREDIENT,
                 payload: {
                     dragIngredient: item,
                     dropIngredient: dropItem,
@@ -33,7 +33,7 @@ export const ConstructorIngredient = (props: IConstructorIngredient) => {
 
     const handleClose = (id: string) => {
         dispatch({
-            type: DECREASE_COUNT,
+            type: constructorActions.DECREASE_COUNT,
             id: id
         })
     }

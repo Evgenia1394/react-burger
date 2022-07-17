@@ -8,6 +8,7 @@ import {WS_CONNECTION_START} from "../../services/actions/socket-actions";
 import LoadingPage from "../loading-page/loading-page";
 import {IBurgerItem, TOrderProps} from "../../types";
 import getCookie from "../../utils/get-cookie";
+import {baseWsUrl} from "../../utils/burger-api";
 
 export const BurgerСomposition: FC<any> = (props) => {
 
@@ -39,18 +40,18 @@ export const BurgerСomposition: FC<any> = (props) => {
         } else {
             console.log(history.location.pathname.split("/").length);
             if (!isWsConnected && history.location.pathname.split("/").length === 3) {
-                dispatch({type: WS_CONNECTION_START, wsUrl: 'wss://norma.nomoreparties.space/orders/all'});
+                dispatch({type: WS_CONNECTION_START, wsUrl: `${baseWsUrl}/all`});
             }
             if (!isWsConnected && history.location.pathname.split("/").length === 4) {
-                dispatch({type: WS_CONNECTION_START, wsUrl: `wss://norma.nomoreparties.space/orders?token=${accessToken}`}
+                dispatch({type: WS_CONNECTION_START, wsUrl: `${baseWsUrl}?token=${accessToken}`}
                 )
-            }
+            };
         }
     }, []);
 
     useEffect(() => {
         if (!wsLoadingConnect && isWsConnected && messages.length) {
-            const currentElem = messages[messages.length - 1].orders.find(order => order._id === id);
+            const currentElem = messages[messages.length - 1].orders?.find(order => order._id === id);
             if (currentElem) {
                 dispatch(getOneOrder(currentElem.number));
             }

@@ -11,22 +11,22 @@ import {logoutActions} from "./logout-actions";
 import {userActions} from "./user-info-actions";
 import getCookie from "../../utils/get-cookie";
 import {checkResponse} from "../../utils/check-response";
-import {TDispatch} from "../store";
+import {RootState, TApplicationActions, TDispatch} from "../store";
 import {IBurgerItem} from "../../types";
 import {oneOrderActions} from "./one-order-actions";
+import {ThunkAction} from "redux-thunk";
 
 export type actionCreatorFactory<T extends (...arg: any) => {type: any, payload?: any, feed?: any}> = ReturnType<T>;
 
 
-const AddFailedAction = (dispatch: TDispatch, text: string) => {
-    //const myDispatch = useMyDispatch()
+const AddFailedAction = (dispatch: TDispatch, text: string): void => {
     const action: any = {
         type: text,
     }
     dispatch(action)
 }
 
-const AddSuccessAction = (dispatch: TDispatch, text: string, res: any) => {
+const AddSuccessAction = (dispatch: TDispatch, text: string, res: any): void => {
     const action: any = {
         type: text,
         feed: res
@@ -34,7 +34,7 @@ const AddSuccessAction = (dispatch: TDispatch, text: string, res: any) => {
     dispatch(action)
 }
 
-export function addIngredient(item: IBurgerItem, array: Array<IBurgerItem>) {
+export function addIngredient(item: IBurgerItem, array: Array<IBurgerItem>): ThunkAction<Promise<void>, RootState, never, TApplicationActions> {
     return async function (dispatch: TDispatch) {
         if (item.type !== 'bun') {
             await dispatch({
@@ -75,7 +75,7 @@ export function addIngredient(item: IBurgerItem, array: Array<IBurgerItem>) {
     }
 }
 
-export function getFeed() {
+export function getFeed(): ThunkAction<Promise<void>, RootState, never, TApplicationActions> {
     return function (dispatch: TDispatch) {
          dispatch({
             type: defaultAllIngredientsActions.GET_ALLINGREDIENTS_REQUEST
@@ -91,7 +91,7 @@ export function getFeed() {
     }
 }
 
-export function postOrder(arrId: (string | undefined)[]) {
+export function postOrder(arrId: (string | undefined)[]): ThunkAction<Promise<void>, RootState, never, TApplicationActions> {
     return function (dispatch: TDispatch) {
         dispatch({
             type: orderActions.POST_ORDER
@@ -116,7 +116,7 @@ export function postOrder(arrId: (string | undefined)[]) {
     }
 }
 
-export function postEmail(email: string) {//послать имейл для восстановления пароля
+export function postEmail(email: string): ThunkAction<Promise<void>, RootState, never, TApplicationActions> {//послать имейл для восстановления пароля
     return function (dispatch: TDispatch) {
         dispatch({
             type: forgotPasswordActions.POST_EMAIL
@@ -138,7 +138,7 @@ export function postEmail(email: string) {//послать имейл для в�
     }
 }
 
-export function resetPassword(password: string, token: string) {//токен из почты+новый пароль
+export function resetPassword(password: string, token: string): ThunkAction<Promise<void>, RootState, never, TApplicationActions> {//токен из почты+новый пароль
     return function (dispatch: TDispatch) {
         dispatch({
             type: resetPasswordActions.POST_RESET_PASSWORD
@@ -163,7 +163,7 @@ export function resetPassword(password: string, token: string) {//токен и�
     }
 }
 
-export function registrationNew(email: string, password: string, name: string) {
+export function registrationNew(email: string, password: string, name: string): ThunkAction<Promise<void>, RootState, never, TApplicationActions> {
     return function (dispatch: TDispatch) {
         dispatch({
             type: registrationActions.POST_REGISTRATION
@@ -189,7 +189,7 @@ export function registrationNew(email: string, password: string, name: string) {
     }
 }
 
-export function logIn(email: string, password: string) {
+export function logIn(email: string, password: string): ThunkAction<Promise<void>, RootState, never, TApplicationActions> {
     return function (dispatch: TDispatch) {
         dispatch({
             type: loginActions.POST_LOGIN
@@ -214,7 +214,7 @@ export function logIn(email: string, password: string) {
     }
 };
 
-export function getNewAccessToken(refreshToken: string) {
+export function getNewAccessToken(refreshToken: string): Promise<string | undefined> {
         return fetch(`${baseUrl}auth/token`, {
             method: 'POST',
             body: JSON.stringify({
@@ -240,7 +240,7 @@ export function getNewAccessToken(refreshToken: string) {
             })
 }
 
-export function logOut(refreshToken: string | undefined) {
+export function logOut(refreshToken: string | undefined): (dispatch: TDispatch) => Promise<void | {type: logoutActions.LOGOUT_SUCCESS, feed: {success: boolean, message: string}} | {type: logoutActions.LOGOUT_FAILED}> {
     return function (dispatch: TDispatch) {
         dispatch({
             type: logoutActions.POST_LOGOUT
@@ -270,7 +270,7 @@ export function logOut(refreshToken: string | undefined) {
     }
 }
 
-export function userInfo(accessToken: string) {
+export function userInfo(accessToken: string): (dispatch: TDispatch) => Promise<{type: userActions.USER_SUCCESS, feed: any} | {type: userActions.USER_FAILED}> {
     return function (dispatch: TDispatch) {
         dispatch({
             type: userActions.GET_USER
@@ -311,7 +311,7 @@ export function userInfo(accessToken: string) {
     }
 }
 
-export function editUserInfo(accessToken: string | undefined, editedForm: any ) {//объект
+export function editUserInfo(accessToken: string | undefined, editedForm: any ): (dispatch: TDispatch) => Promise<{type: userActions.USER_SUCCESS, feed: any} | {type: userActions.USER_FAILED} | undefined> {//объект
     return function (dispatch: TDispatch) {
         dispatch({
             type: userActions.EDIT_USER,
@@ -351,7 +351,7 @@ export function editUserInfo(accessToken: string | undefined, editedForm: any ) 
 }
 
 
-export function getOneOrder(number: number, personal?: boolean) {
+export function getOneOrder(number: number, personal?: boolean) : (dispatch: TDispatch) => Promise<void | {type: oneOrderActions.SUCCESS_ONE_ORDER, feed: any} | {type: oneOrderActions.FAILED_ONE_ORDER}> {
     return function (dispatch: TDispatch) {
         dispatch({
             type: oneOrderActions.REQUEST_ONE_ORDER,

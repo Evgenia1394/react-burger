@@ -2,18 +2,18 @@ import orderFeedStyles from './order-feed.module.css';
 import React, {useEffect} from "react";
 import {Feed} from "../components/feed/feed";
 import {Readiness} from "../components/feed/readiness";
-import {useDispatch} from "react-redux";
-import {WS_CONNECTION_CLOSED, WS_CONNECTION_START} from "../services/actions/socket-actions";
-import {useMySelector} from "../services/store";
+import {WS_CONNECTION_CLOSED, WS_CONNECTION_START, wsActions, wsInit} from "../services/actions/socket-actions";
+import {useMyDispatch, useMySelector} from "../services/store";
+import {baseWsUrl} from "../utils/burger-api";
 
 export const OrderFeed = () => {
 
     const messages = useMySelector((state) => state.wsReducer.messages);
 
-    const dispatch = useDispatch();
+    const dispatch = useMyDispatch();
 
     useEffect(() => {
-        dispatch({type: WS_CONNECTION_START, wsUrl: 'wss://norma.nomoreparties.space/orders/all'})
+        dispatch({type: WS_CONNECTION_START, wsUrl: `${baseWsUrl}/all`})
 
         return () => {
             dispatch({type: WS_CONNECTION_CLOSED})

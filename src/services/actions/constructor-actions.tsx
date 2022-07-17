@@ -18,7 +18,7 @@ export type TConstructorIncreaseAction = ActionTypeCreatorId<constructorActions.
 export type TConstructorDecreaseAction = Required<ActionTypeCreatorId<constructorActions.DECREASE_COUNT, string>>;
 export type TConstructorAddAction = Required<ActionTypeCreatorPayload<constructorActions.ADD_INGREDIENT, IBurgerItem>>;
 export type TConstructorReplaceBunAction = ActionTypeCreatorPayload<constructorActions.REPLACE_BUN, string>;
-export type TConstructorSortAction = ActionTypeCreatorPayload<constructorActions.SORT_INGREDIENT, { dragIngredient: IBurgerItem, dropIngredient: IBurgerItem }>;
+export type TConstructorSortAction = Required<ActionTypeCreatorPayload<constructorActions.SORT_INGREDIENT, { dragIngredient: IBurgerItem, dropIngredient: IBurgerItem }>>;
 
 
 export type TConstructorActions =

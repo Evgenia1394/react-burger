@@ -111,7 +111,7 @@ export const Profile = () => {
             <div className={authStyles.mainProfile}>
                 <div className={authStyles.actions}>
                     <div className={authStyles.action}>
-                        <NavLink to={'/profile/form'}
+                        <NavLink to={'/profile'}
                                  activeStyle={{color: '#F2F2F3'}}
                                  className={authStyles.inactiveAction}>
                             <p className="text text_type_main-medium">
@@ -143,7 +143,7 @@ export const Profile = () => {
                 </div>
 
                 <Switch>
-                    <Route path='/profile/form'>
+                    <Route path='/profile' exact={true}>
                         <form className={authStyles.formProfile}
                           onSubmit={editUser}>
                         <Input

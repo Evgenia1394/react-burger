@@ -75,25 +75,10 @@ export type AppThunk<TReturn = void> = ActionCreator<
     ThunkAction<TReturn, Action, RootState, TApplicationActions>
     >;
 
-// Типизация метода dispatch для проверки на валидность отправляемого экшена
-//export type AppDispatch = typeof store.dispatch;
-
-export type TStore = ReturnType<typeof commonReducer>
-export type TDispatch = ThunkDispatch<TStore, never, TApplicationActions>
+export type TDispatch = ThunkDispatch<RootState, never, TApplicationActions>
 
 //для всех компонентов
 export const useMyDispatch = () => useDispatch<TDispatch>()
-export const useMySelector: TypedUseSelectorHook<TStore> = useSelector
-
-
-//для мидлваров
-export type AppDispatch = ThunkDispatch<RootState, never, TApplicationActions>
-//export const useDispatch = () => dispatchHook<AppDispatch>();
-// function foo() {
-//     return (dispatch: AppDispatch) => {
-//         dispatch(foo())
-//     }
-// }
-
+export const useMySelector: TypedUseSelectorHook<RootState> = useSelector
 
 export default store;

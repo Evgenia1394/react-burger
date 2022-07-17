@@ -31,8 +31,7 @@ export const FeedCard: FC<TOrderProps> = (props) => {
 
     return (
         <Link to={{pathname: props.isHistory ? `/profile/orders/${props._id}` : `/feed/${props._id}`, state: { background: "location" }}} >
-        <div key={props._id}>
-            <div className={feedStyles.card}>
+            <div className={props.isHistory ? feedStyles.cardHistory : feedStyles.card}>
                 <div className={feedStyles.cardContent}>
                     <div>
                         <p className="text text_type_digits-default">{`#${props.number}`}</p>
@@ -79,7 +78,6 @@ export const FeedCard: FC<TOrderProps> = (props) => {
                     </div>
                 </div>
             </div>
-        </div>
         </Link>
     )
 }
