@@ -1,12 +1,11 @@
 import {Button, EmailInput, PasswordInput} from "@ya.praktikum/react-developer-burger-ui-components";
-import {ChangeEvent, FormEvent, useState} from "react";
+import {ChangeEvent, FormEvent, useEffect, useState} from "react";
 import authStyles from './auth.module.css'
 import './styles.css';
 import {Link, useHistory, useLocation} from 'react-router-dom';
-import {useDispatch} from "react-redux";
 import {logIn} from "../services/actions/thunks";
-import {IForm, SyntheticEvent} from "../types";
-import {useMyDispatch} from "../services/store";
+import {IForm} from "../types";
+import {useMyDispatch, useMySelector} from "../services/store";
 
 
 export const Login = () => {
@@ -17,7 +16,25 @@ export const Login = () => {
 
     const history = useHistory();
     const dispatch = useMyDispatch();
-    const { state }: {state: {from: string}} = useLocation();
+    const { state }: {state: {from: {pathname: string}}} = useLocation();
+
+    const loginRequest = useMySelector(state => state.loginReducer.feedLoginRequest);
+    const isLogged = useMySelector(state => state.loginReducer.isLogged);
+    const user = useMySelector((state) => state.userInfoReducer.feedUserInfo);
+
+    useEffect(() => {
+        if ((isLogged || user.success) && (state?.from?.pathname || "/")) {
+            const from = state?.from?.pathname;
+            if(from) {
+                history.replace({pathname: from});
+            } else {
+                history.replace({pathname: "/"});
+            }
+
+        }
+    }, [loginRequest])//меняется LoginRequest true false
+
+
 
     const onChange = (e: ChangeEvent<HTMLInputElement>) => {
         const target = e.target;
@@ -30,15 +47,14 @@ export const Login = () => {
     }
 
     const signIn = (e: FormEvent<HTMLFormElement>) => {
-
         e.preventDefault();
         // @ts-ignore
         dispatch(logIn(form.email, form.password));
 
-        if (state?.from) {
-            return history.replace(state?.from)
-        }
-        history.replace({pathname: '/'})
+        // if (state?.from && (isLogged || user.success)) {
+        //     return history.replace(state?.from)
+        // }
+        // history.replace({pathname: '/'})
     }
 
     return (

@@ -4,6 +4,7 @@ import React, {FC} from "react";
 import {useMySelector} from "../../services/store";
 import {IBurgerItem, TOrderProps} from "../../types";
 import {Link} from "react-router-dom";
+import {getFormatDate} from "../../utils/format-date";
 
 export const FeedCard: FC<TOrderProps> = (props) => {
     const idIngredients = props.ingredients;
@@ -38,7 +39,7 @@ export const FeedCard: FC<TOrderProps> = (props) => {
                     </div>
                     <div>
                         <p className="text text_type_main-default text_color_inactive">
-                            {props.createdAt}
+                            {getFormatDate(props.createdAt)}
                         </p>
                     </div>
                 </div>

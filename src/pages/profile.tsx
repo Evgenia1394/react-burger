@@ -1,4 +1,4 @@
-import React, {ChangeEvent, FormEvent, useRef, useState} from "react";
+import React, {ChangeEvent, FormEvent, useEffect, useRef, useState} from "react";
 import authStyles from "./auth.module.css";
 import {Button, Input} from "@ya.praktikum/react-developer-burger-ui-components";
 import {NavLink, Route, Switch, useHistory, useLocation} from "react-router-dom";
@@ -12,20 +12,35 @@ import {useMyDispatch, useMySelector} from "../services/store";
 import ProtectedAuthRoute from "../components/protected-auth-route";
 import {HistoryOrders} from "./history-orders";
 import {BurgerСomposition} from "../components/feed/burger-composition";
-import Modal from "../components/modal/modal";
+import {loginActions} from "../services/actions/login-actions";
 
 export const Profile = () => {
-
-    let feedUserInfo = useMySelector(state => state.userInfoReducer.feedUserInfo);
+    const feedUserInfo = useMySelector(state => state.userInfoReducer.feedUserInfo);
+    const feedUserInfoSuccess = useMySelector(state => state.userInfoReducer.feedUserInfo.success);
+    const isLogin = useMySelector((state) => state.loginReducer.feedLogin.success)
+    const feedUserInfoUserData = useMySelector(state => state.userInfoReducer.feedUserInfo.user);
+    const feedLoginUser = useMySelector((state) => state.loginReducer.feedLogin.user)
     const {isShowModal} = useMySelector((state) => state.modalReducer);
     let currentOrder = useMySelector(state => state.oneOrderReducer.oneOrder);
 
-    let name = feedUserInfo.user.name;
-    let email = feedUserInfo.user.email;
+    let name = feedUserInfoUserData.name || feedLoginUser.name || undefined;
+    let email = feedUserInfoUserData.email || feedLoginUser.email || undefined;
+
+    useEffect(()=> {
+        if(feedUserInfoUserData?.name) {
+            name = feedUserInfoUserData.name;
+            email = feedUserInfoUserData.email;
+        }
+        if(feedLoginUser?.name) {
+            name = feedLoginUser.name;
+            email = feedLoginUser.email;
+        }
+
+    }, [feedUserInfoSuccess, isLogin])
 
     const [form, setForm] = useState<IUserForm>({
-        name: name,
-        email: email,
+        name: name || feedUserInfoUserData.name,
+        email: email || feedUserInfoUserData.email,
         password: ""
     });
 
@@ -59,6 +74,9 @@ export const Profile = () => {
             await dispatch({type: isLoggedActions.NOT_LOGGED})
         }
         await dispatch({type: userActions.CLEAR_USER});
+
+        await dispatch({type: loginActions.LOGIN_FAILED});
+
         await history.replace({pathname: '/login'})
     }
 

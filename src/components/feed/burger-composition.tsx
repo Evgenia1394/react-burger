@@ -9,6 +9,7 @@ import LoadingPage from "../loading-page/loading-page";
 import {IBurgerItem, TOrderProps} from "../../types";
 import getCookie from "../../utils/get-cookie";
 import {baseWsUrl} from "../../utils/burger-api";
+import {getFormatDate} from "../../utils/format-date";
 
 export const BurgerСomposition: FC<any> = (props) => {
 
@@ -38,7 +39,6 @@ export const BurgerСomposition: FC<any> = (props) => {
         if (props.number) {
             dispatch(getOneOrder(props.number));
         } else {
-            console.log(history.location.pathname.split("/").length);
             if (!isWsConnected && history.location.pathname.split("/").length === 3) {
                 dispatch({type: WS_CONNECTION_START, wsUrl: `${baseWsUrl}/all`});
             }
@@ -154,7 +154,7 @@ export const BurgerСomposition: FC<any> = (props) => {
                     <div className={burgerCompositionStyle.sum}>
                         <div className={burgerCompositionStyle.data}>
                             <p className="text text_type_main-default text_color_inactive">
-                                {currentOrder.createdAt}
+                                {getFormatDate(currentOrder.createdAt)}
                             </p>
                         </div>
                         <div className={burgerCompositionStyle.total}>

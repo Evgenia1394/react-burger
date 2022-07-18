@@ -1,5 +1,4 @@
 import {Middleware, MiddlewareAPI} from "redux";
-import {WS_CONNECTION_START, wsInit} from "../actions/socket-actions";
 import {RootState, TDispatch} from "../store";
 
 export const socketMiddleware = (wsActions: any): Middleware  => {
@@ -19,7 +18,7 @@ export const socketMiddleware = (wsActions: any): Middleware  => {
                 wsInit
             } = wsActions;
 
-            if (type === WS_CONNECTION_START) {
+            if (type === wsInit().type) {
                 socket = new WebSocket(wsUrl);
             }
 
