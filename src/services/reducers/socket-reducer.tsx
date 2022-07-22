@@ -23,7 +23,7 @@ type TWSState = {
     error?: Event;
 }
 
-const initialSocketState = {
+export const initialSocketState = {
     wsConnected: false,
     wsLoadingConnect: false,
     messages: []
