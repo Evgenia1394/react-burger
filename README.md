@@ -1,5 +1,8 @@
 # Getting Started with Create React App
 
+Application is available:
+https://evgenia1394.github.io/react-burger/
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts

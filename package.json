@@ -2,6 +2,7 @@
   "name": "react-burger",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://Evgenia1394.github.io/react-burger",
   "dependencies": {
     "@4tw/cypress-drag-drop": "^2.2.1",
     "@reduxjs/toolkit": "^1.8.1",
@@ -35,14 +36,17 @@
     "eslint": "8.13.0",
     "eslint-plugin-cypress": "^2.12.1",
     "fetch-mock": "^9.11.0",
+    "gh-pages": "^4.0.0",
     "redux-mock-store": "^1.5.4"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts test --watchAll",
     "eject": "react-scripts eject",
-    "cypress:open": "cypress open"
+    "cypress:open": "cypress open",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
