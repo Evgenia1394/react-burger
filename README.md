@@ -1,7 +1,7 @@
 # Getting Started with Create React App
 
 ##Deployed vesion is available there:
-### `https://evgenia1394.github.io/`
+### `https://evgenia1394.github.io/react-burger/`
 
 
 
