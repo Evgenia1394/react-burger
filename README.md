@@ -1,6 +1,9 @@
 # Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+##Deployed vesion is available there:
+### `https://evgenia1394.github.io/`
+
+
 
 ## Available Scripts
 
